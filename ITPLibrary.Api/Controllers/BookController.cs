@@ -1,4 +1,5 @@
-﻿using ITPLibrary.Api.Core.Dtos;
+﻿using ITPLibrary.Api.Controllers.Method_Routes;
+using ITPLibrary.Api.Core.Dtos;
 using ITPLibrary.Api.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,11 +14,12 @@ namespace ITPLibrary.Api.Controllers
             _bookService = bookService;
         }
 
+        [HttpGet(BookControllerRoutes.GetAllBooks)]
         public async Task<ActionResult<IEnumerable<BookDto>>> GetAllBooks()
         {
             var books = await _bookService.GetAllBooks();
 
-            if (books != default)
+            if (books.Value != null)
             {
                 return Ok(books);
             }
@@ -27,11 +29,12 @@ namespace ITPLibrary.Api.Controllers
             }
         }
 
+        [HttpGet(BookControllerRoutes.GetPopularBooks)]
         public async Task<ActionResult<IEnumerable<BookDto>>> GetPopularBooks()
         {
             var books = await _bookService.GetPopularBooks();
-            
-            if (books != default)
+
+            if (books.Value != null)
             {
                 return Ok(books);
             }
@@ -41,11 +44,11 @@ namespace ITPLibrary.Api.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet(BookControllerRoutes.GetBookById)]
         public async Task<ActionResult<BookDto>> GetBookById(int id)
         {
             var book = await _bookService.GetBookById(id);
-            if (book != default)
+            if (book.Value != null)
             {
                 return Ok(book);
             }

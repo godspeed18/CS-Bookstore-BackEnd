@@ -16,17 +16,17 @@ namespace ITPLibrary.Api.Data.Repositories.Implementations
             _db = db;
         }
 
-        public async Task<ActionResult<IEnumerable<Book>>> GetAllBooks()
+        public async Task<IEnumerable<Book>> GetAllBooks()
         {
             return await _db.Books.ToListAsync();
         }
 
-        public async Task<ActionResult<Book>> GetBookById(int id)
+        public async Task<Book> GetBookById(int id)
         {
             return await _db.Books.FindAsync(id);
         }
 
-        public async Task<ActionResult<IEnumerable<Book>>> GetPopularBooks()
+        public async Task<IEnumerable<Book>> GetPopularBooks()
         {
             return await _db.Books.ToListAsync();
         }

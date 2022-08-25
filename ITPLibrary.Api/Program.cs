@@ -1,6 +1,8 @@
 using ITPLibrary.Api.Core.Services.Implementations;
 using ITPLibrary.Api.Core.Services.Interfaces;
 using ITPLibrary.Api.Data.Data;
+using ITPLibrary.Api.Data.Data.Data_Provider.Implementations;
+using ITPLibrary.Api.Data.Data.Data_Provider.Interfaces;
 using ITPLibrary.Api.Data.Repositories.Implementations;
 using ITPLibrary.Api.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +14,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IBookDataProvider, BookDataProvider>();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")
     ));

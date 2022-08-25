@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ITPLibrary.Api.Core.Dtos;
 using ITPLibrary.Api.Core.Services.Interfaces;
+using ITPLibrary.Api.Data.Data.Data_Provider.Interfaces;
 using ITPLibrary.Api.Data.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,16 +11,18 @@ namespace ITPLibrary.Api.Core.Services.Implementations
     {
         private readonly IBookRepository _repository;
         private readonly IMapper _mapper;
+        private readonly IBookDataProvider _dataProvider;
 
-        public BookService(IBookRepository repository, IMapper mapper)
+        public BookService(IBookRepository repository, IMapper mapper,IBookDataProvider dataProvider)
         {
             _repository = repository;
             _mapper = mapper;
+            _dataProvider = dataProvider;
         }
 
         public async Task<ActionResult<IEnumerable<BookDto>>> GetPopularBooks()
         {
-            var books = await _repository.GetPopularBooks();
+            var books = await _dataProvider.GetPopularBooks();
             return _mapper.Map<List<BookDto>>(books);
         }
 
