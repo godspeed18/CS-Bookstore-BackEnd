@@ -33,15 +33,17 @@ namespace ITPLibrary.Api.Data.Data.Data_Provider.Implementations
 
                     SqlDataReader reader = command.ExecuteReader();
                     List<Book> books = new List<Book>();
+
                     while (await reader.ReadAsync())
                     {
                         var currentBook = new Book()
                         {
-                            Author = await reader.GetFieldValueAsync<string>(2),
-                            Title = await reader.GetFieldValueAsync<string>(1),
-                            Price = await reader.GetFieldValueAsync<int>(3),
-                            Id = await reader.GetFieldValueAsync<int>(0),
+                            Author = reader["Author"].ToString(),
+                            Title = reader["Title"].ToString(),
+                            Price = (int)reader["Price"],
+                            Id = (int)reader["Id"],
                         };
+
                         books.Add(currentBook);
                     }
 

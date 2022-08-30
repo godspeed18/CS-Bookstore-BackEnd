@@ -12,6 +12,7 @@ namespace ITPLibrary.Api.Data.Data
         }
 
         public DbSet<Book> Books { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -23,6 +24,10 @@ namespace ITPLibrary.Api.Data.Data
 
             modelBuilder.Entity<Book>().Property(p => p.Author).HasMaxLength(BookValidationRules.AuthorMaxLength);
             modelBuilder.Entity<Book>().Property(p => p.Title).HasMaxLength(BookValidationRules.TitleMaxLength);
+
+            modelBuilder.Entity<User>().Property(p => p.Name).HasMaxLength(UserValidationRules.NameMaxLength);
+            modelBuilder.Entity<User>().Property(p => p.Email).HasMaxLength(UserValidationRules.EmailMaxLength);
+            modelBuilder.Entity<User>().Property(p => p.Password).HasMaxLength(UserValidationRules.PasswordMaxLength);
 
             base.OnModelCreating(modelBuilder);
         }

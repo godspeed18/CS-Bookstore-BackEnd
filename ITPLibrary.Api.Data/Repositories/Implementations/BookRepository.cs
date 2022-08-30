@@ -1,9 +1,7 @@
 ﻿using ITPLibrary.Api.Data.Data;
 using ITPLibrary.Api.Data.Entities;
 using ITPLibrary.Api.Data.Repositories.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Web.Mvc;
 
 namespace ITPLibrary.Api.Data.Repositories.Implementations
 {
