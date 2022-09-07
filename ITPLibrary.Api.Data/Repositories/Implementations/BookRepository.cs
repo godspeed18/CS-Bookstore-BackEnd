@@ -32,22 +32,7 @@ namespace ITPLibrary.Api.Data.Repositories.Implementations
 
         public async Task<IEnumerable<Book>> GetPromotedBooks()
         {
-            var promotedBooks = from Book in _db.Books
-                                join BookDetails in _db.BookDetails
-                                    on Book.Id equals BookDetails.BookId
-                                select new Book
-                                {
-                                    Author = Book.Author,
-                                    AddedDateTime = Book.AddedDateTime,
-                                    Popular = Book.Popular,
-                                    Title = Book.Title,
-                                    Price = Book.Price,
-                                    Id = Book.Id,
-                                    Thumbnail = Book.Thumbnail,
-                                    BookDetails = BookDetails
-                                };
-
-            return promotedBooks;
+            return await _db.Books.Where(b => b.Popular == true).Include(b => b.BookDetails).ToListAsync();
         }
 
         public async Task PostBook(Book newBook)
@@ -56,17 +41,17 @@ namespace ITPLibrary.Api.Data.Repositories.Implementations
             await _db.SaveChangesAsync();
         }
 
-        public async Task<BookDetails> GetBookDetails(int BookId)
-        {
-            return await _db.BookDetails.Where(u => u.BookId == BookId).FirstOrDefaultAsync();
-        }
-
         public async Task<IEnumerable<Book>> GetPopularAndRecentlyAddedBooks()
         {
             return await _db.Books.Where
                 (u => (DateTimeOffset.UtcNow - u.AddedDateTime).TotalDays
                         <= BookValidationRules.RecentlyAddedRule
                             || u.Popular == true).ToListAsync();
+        }
+
+        public async Task<Book> GetBookDetails(int bookId)
+        {
+            return await _db.Books.Where(b => b.Id == bookId).Include(b => b.BookDetails).FirstOrDefaultAsync();
         }
     }
 }

@@ -89,6 +89,22 @@ namespace ITPLibrary.Api.Controllers
             }
         }
 
+
+        [HttpGet(BookControllerRoutes.GetBookDetails)]
+        public async Task<ActionResult> GetBookDetails(int BookId)
+        {
+            var book = await _bookService.GetBookDetails(BookId);
+
+            if (book == null)
+            {
+                return BadRequest("No book with the specified id was found");
+            }
+            else
+            {
+                return Ok(book);
+            }
+        }
+
         [HttpGet(BookControllerRoutes.GetPopularAndRecentlyAddedBooks)]
         public async Task<ActionResult<PromotedBookDto>> GetPromotedAndRecentlyAddedBooks()
         {

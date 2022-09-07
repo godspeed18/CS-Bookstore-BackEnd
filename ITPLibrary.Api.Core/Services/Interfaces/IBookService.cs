@@ -4,6 +4,7 @@ namespace ITPLibrary.Api.Core.Services.Interfaces
 {
     public interface IBookService
     {
+        public Task<BookDetailsDto> GetBookDetails(int bookId);
         public Task<IEnumerable<PromotedBookDto>> GetPromotedBooks();
         public Task<IEnumerable<BookDto>> GetPopularBooks();
         public Task<BookDto> GetBookById(int id);

@@ -4,6 +4,7 @@ namespace ITPLibrary.Api.Data.Repositories.Interfaces
 {
     public interface IBookRepository
     {
+        public Task<Book> GetBookDetails(int bookId);
         public Task<IEnumerable<Book>> GetPopularAndRecentlyAddedBooks();
         public Task<IEnumerable<Book>> GetPromotedBooks();
         public Task<IEnumerable<Book>> GetPopularBooks();

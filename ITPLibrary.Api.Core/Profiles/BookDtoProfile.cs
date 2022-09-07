@@ -34,7 +34,12 @@ namespace ITPLibrary.Api.Core.Profiles
                 .ForMember(dest => dest.RecentlyAdded,
                             opt => opt.MapFrom
                                 (src => BookValidationRules.
-                                    IsBookRecentlyAdded(src.AddedDateTime))); ;
+                                    IsBookRecentlyAdded(src.AddedDateTime)));
+
+            CreateMap<Book, BookDetailsDto>()
+                .ForMember(dest => dest.Thumbnail,
+                            opt => opt.MapFrom
+                                (src => ImageConverter.ByteArrayToImage(src.Thumbnail)));
         }
     }
 }

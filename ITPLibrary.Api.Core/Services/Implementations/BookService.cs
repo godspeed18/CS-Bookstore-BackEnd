@@ -13,7 +13,7 @@ namespace ITPLibrary.Api.Core.Services.Implementations
         private readonly IMapper _mapper;
         private readonly IBookDataProvider _dataProvider;
 
-        public BookService(IBookRepository repository, IMapper mapper,IBookDataProvider dataProvider)
+        public BookService(IBookRepository repository, IMapper mapper, IBookDataProvider dataProvider)
         {
             _repository = repository;
             _mapper = mapper;
@@ -40,8 +40,8 @@ namespace ITPLibrary.Api.Core.Services.Implementations
 
         public async Task<bool> PostBook(PostBookDto newBook)
         {
-           await _repository.PostBook(_mapper.Map<Book>(newBook));
-                return true;
+            await _repository.PostBook(_mapper.Map<Book>(newBook));
+            return true;
         }
 
         public async Task<IEnumerable<BookDto>> GetAllBooks()
@@ -50,10 +50,16 @@ namespace ITPLibrary.Api.Core.Services.Implementations
             return _mapper.Map<List<BookDto>>(books);
         }
 
-        public async Task<IEnumerable<RecentlyAddedAndPopularBookDto>> GetAddedPopularBookDtos()
+        public async Task<IEnumerable<RecentlyAddedAndPopularBookDto>> GetPopularAndRecentlyAddedBooks()
         {
             var books = await _repository.GetPopularAndRecentlyAddedBooks();
             return _mapper.Map<List<RecentlyAddedAndPopularBookDto>>(books);
+        }
+
+        public async Task<BookDetailsDto> GetBookDetails(int bookId)
+        {
+            var books = await _repository.GetBookDetails(bookId);
+            return _mapper.Map<BookDetailsDto>(books);
         }
     }
 }

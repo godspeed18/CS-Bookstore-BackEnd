@@ -8,5 +8,6 @@
         public const string GetPromotedBooks = "promoted";
         public const string PostBook = "post";
         public const string GetPopularAndRecentlyAddedBooks = "recently_added-popular";
+        public const string GetBookDetails = "book-details";
     }
 }
