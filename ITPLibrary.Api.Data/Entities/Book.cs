@@ -1,4 +1,6 @@
-﻿namespace ITPLibrary.Api.Data.Entities
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ITPLibrary.Api.Data.Entities
 {
     public class Book
     {
@@ -9,5 +11,13 @@
         public string Author { get; set; }
 
         public int Price { get; set; }
+
+        public byte[]? Thumbnail { get; set; }
+
+        public DateTimeOffset AddedDateTime { get; set; }
+        
+        public bool Popular { get; set; }
+
+        public BookDetails BookDetails { get; set; } 
     }
 }

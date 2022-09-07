@@ -4,6 +4,7 @@ using ITPLibrary.Api.Data.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ITPLibrary.Api.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220901130427_add-book-details-column")]
+    partial class addbookdetailscolumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,19 +32,22 @@ namespace ITPLibrary.Api.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<DateTimeOffset>("AddedDateTime")
-                        .HasColumnType("datetimeoffset");
-
                     b.Property<string>("Author")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("DetailId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("Popular")
                         .HasColumnType("bit");
 
                     b.Property<int>("Price")
                         .HasColumnType("int");
+
+                    b.Property<bool>("RecentlyAdded")
+                        .HasColumnType("bit");
 
                     b.Property<byte[]>("Thumbnail")
                         .HasColumnType("varbinary(max)");
@@ -53,6 +58,8 @@ namespace ITPLibrary.Api.Data.Migrations
                         .HasColumnType("nvarchar(80)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DetailId");
 
                     b.ToTable("Books");
                 });
@@ -65,18 +72,12 @@ namespace ITPLibrary.Api.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BookId")
-                        .IsUnique();
 
                     b.ToTable("BookDetails");
                 });
@@ -109,21 +110,15 @@ namespace ITPLibrary.Api.Data.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("ITPLibrary.Api.Data.Entities.BookDetails", b =>
+            modelBuilder.Entity("ITPLibrary.Api.Data.Entities.Book", b =>
                 {
-                    b.HasOne("ITPLibrary.Api.Data.Entities.Book", "Book")
-                        .WithOne("BookDetails")
-                        .HasForeignKey("ITPLibrary.Api.Data.Entities.BookDetails", "BookId")
+                    b.HasOne("ITPLibrary.Api.Data.Entities.BookDetails", "BookDetails")
+                        .WithMany()
+                        .HasForeignKey("DetailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Book");
-                });
-
-            modelBuilder.Entity("ITPLibrary.Api.Data.Entities.Book", b =>
-                {
-                    b.Navigation("BookDetails")
-                        .IsRequired();
+                    b.Navigation("BookDetails");
                 });
 #pragma warning restore 612, 618
         }

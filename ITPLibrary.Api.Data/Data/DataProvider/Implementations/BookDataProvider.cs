@@ -1,4 +1,4 @@
-﻿using ITPLibrary.Api.Data.Data.Data_Provider.Interfaces;
+using ITPLibrary.Api.Data.Data.Data_Provider.Interfaces;
 using ITPLibrary.Api.Data.Entities;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;

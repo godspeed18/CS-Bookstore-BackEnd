@@ -5,10 +5,11 @@ using ITPLibrary.Api.Data.Data.Data_Provider.Implementations;
 using ITPLibrary.Api.Data.Data.Data_Provider.Interfaces;
 using ITPLibrary.Api.Data.Repositories.Implementations;
 using ITPLibrary.Api.Data.Repositories.Interfaces;
+using ITPLibrary.Api.OperationFilters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Configuration;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Sample.FileUpload.Api", Version = "v1" });
+    c.OperationFilter<SwaggerFileOperationFilter>();
+});
 builder.Services.AddScoped<IUserLoginService, UserLoginService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();

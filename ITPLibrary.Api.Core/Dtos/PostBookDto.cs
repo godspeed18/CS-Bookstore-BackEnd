@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ITPLibrary.Api.Core.Dtos
 {
-    public class BookDto
+    public class PostBookDto
     {
         [Key]
         public int Id { get; set; }
@@ -23,13 +23,12 @@ namespace ITPLibrary.Api.Core.Dtos
 
         public byte[]? Thumbnail { get; set; }
 
-        public bool RecentlyAdded { get; set; }
+        [Required]
+        public DateTimeOffset RecentlyAdded { get; set; }
 
+        [Required]
         public bool Popular { get; set; }
 
-        public int DetailId { get; set; }
-
-        [ForeignKey("DetailId")]
         public BookDetails BookDetails { get; set; }
     }
 }

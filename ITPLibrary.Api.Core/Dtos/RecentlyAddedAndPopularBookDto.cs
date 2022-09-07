@@ -1,11 +1,10 @@
-using ITPLibrary.Api.Data.Entities;
-using ITPLibrary.Api.Data.Entities.Validation_Rules;
+﻿using ITPLibrary.Api.Data.Entities.Validation_Rules;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Drawing;
 
 namespace ITPLibrary.Api.Core.Dtos
 {
-    public class BookDto
+    public class RecentlyAddedAndPopularBookDto
     {
         [Key]
         public int Id { get; set; }
@@ -21,15 +20,12 @@ namespace ITPLibrary.Api.Core.Dtos
         [Range(BookValidationRules.PriceMin, BookValidationRules.PriceMax)]
         public int Price { get; set; }
 
-        public byte[]? Thumbnail { get; set; }
+        public Image Thumbnail { get; set; }
 
+        [Required]
         public bool RecentlyAdded { get; set; }
 
+        [Required]
         public bool Popular { get; set; }
-
-        public int DetailId { get; set; }
-
-        [ForeignKey("DetailId")]
-        public BookDetails BookDetails { get; set; }
     }
 }

@@ -2,8 +2,8 @@
 using ITPLibrary.Api.Core.Dtos;
 using ITPLibrary.Api.Core.Services.Interfaces;
 using ITPLibrary.Api.Data.Data.Data_Provider.Interfaces;
+using ITPLibrary.Api.Data.Entities;
 using ITPLibrary.Api.Data.Repositories.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 
 namespace ITPLibrary.Api.Core.Services.Implementations
 {
@@ -20,22 +20,40 @@ namespace ITPLibrary.Api.Core.Services.Implementations
             _dataProvider = dataProvider;
         }
 
-        public async Task<ActionResult<IEnumerable<BookDto>>> GetPopularBooks()
+        public async Task<IEnumerable<PromotedBookDto>> GetPromotedBooks()
+        {
+            var books = await _repository.GetPromotedBooks();
+            return _mapper.Map<List<PromotedBookDto>>(books);
+        }
+
+        public async Task<IEnumerable<BookDto>> GetPopularBooks()
         {
             var books = await _dataProvider.GetPopularBooks();
             return _mapper.Map<List<BookDto>>(books);
         }
 
-        public async Task<ActionResult<BookDto>> GetBookById(int id)
+        public async Task<BookDto> GetBookById(int id)
         {
             var book = await _repository.GetBookById(id);
             return _mapper.Map<BookDto>(book);
         }
 
-        public async Task<ActionResult<IEnumerable<BookDto>>> GetAllBooks()
+        public async Task<bool> PostBook(PostBookDto newBook)
+        {
+           await _repository.PostBook(_mapper.Map<Book>(newBook));
+                return true;
+        }
+
+        public async Task<IEnumerable<BookDto>> GetAllBooks()
         {
             var books = await _repository.GetAllBooks();
             return _mapper.Map<List<BookDto>>(books);
+        }
+
+        public async Task<IEnumerable<RecentlyAddedAndPopularBookDto>> GetAddedPopularBookDtos()
+        {
+            var books = await _repository.GetPopularAndRecentlyAddedBooks();
+            return _mapper.Map<List<RecentlyAddedAndPopularBookDto>>(books);
         }
     }
 }

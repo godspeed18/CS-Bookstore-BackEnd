@@ -1,12 +1,14 @@
-﻿using ITPLibrary.Api.Core.Dtos;
-using Microsoft.AspNetCore.Mvc;
+using ITPLibrary.Api.Core.Dtos;
 
 namespace ITPLibrary.Api.Core.Services.Interfaces
 {
     public interface IBookService
     {
-        public Task<ActionResult<IEnumerable<BookDto>>> GetPopularBooks();
-        public Task<ActionResult<BookDto>> GetBookById(int id);
-        public Task<ActionResult<IEnumerable<BookDto>>> GetAllBooks();
+        public Task<IEnumerable<PromotedBookDto>> GetPromotedBooks();
+        public Task<IEnumerable<BookDto>> GetPopularBooks();
+        public Task<BookDto> GetBookById(int id);
+        public Task<IEnumerable<BookDto>> GetAllBooks();
+        public Task<bool> PostBook(PostBookDto newBook);
+        public Task<IEnumerable<RecentlyAddedAndPopularBookDto>> GetPopularAndRecentlyAddedBooks();
     }
 }
