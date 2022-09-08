@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
 using ITPLibrary.Api.Core.Dtos;
+using ITPLibrary.Api.Core.PasswordHasher;
 using ITPLibrary.Api.Core.Services.Interfaces;
 using ITPLibrary.Api.Data.Entities;
 using ITPLibrary.Api.Data.Entities.RequestStatuses;
-using ITPLibrary.Api.Data.Entities.Validation_Rules.Validation_Regex;
 using ITPLibrary.Api.Data.Repositories.Interfaces;
 using Microsoft.Extensions.Configuration;
 using System.Net;
 using System.Net.Mail;
+using System.Security.Cryptography;
 
 namespace ITPLibrary.Api.Core.Services.Implementations
 {
@@ -16,56 +17,24 @@ namespace ITPLibrary.Api.Core.Services.Implementations
         private readonly IUserRepository _repository;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
+        private readonly PasswordWithSaltHasher _passwordHasher;
 
         public UserService(IUserRepository repository, IMapper mapper, IConfiguration configuration)
         {
             _repository = repository;
             _mapper = mapper;
             _configuration = configuration;
+            _passwordHasher = new PasswordWithSaltHasher();
         }
 
-        public bool IsPasswordValid(UserValidationRegex validation, string password)
+        public async Task<UserRegisterStatus> ValidateUserData(UserRegisterDto newUser)
         {
-            if (validation.PasswordHasMinimum8Chars.IsMatch(password) == false
-                || validation.PasswordHasUpperChar.IsMatch(password) == false
-                   || validation.PasswordHasNumber.IsMatch(password) == false)
+            if (await _repository.IsEmailAlreadyRegistered(newUser.Email))
             {
-                return false;
+                return UserRegisterStatus.EmailAlreadyRegistered;
             }
 
-            return true;
-        }
-
-        public bool PasswordAndConfirmedPasswordMatch(string password, string confirmedPassword)
-        {
-            if (password == confirmedPassword)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public bool IsEmailValid(UserValidationRegex validation, string email)
-        {
-            if (!validation.isEmailValid.IsMatch(email))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public bool IsNameValid(UserValidationRegex validation, string name)
-        {
-            if (!validation.isNameValid.IsMatch(name))
-            {
-                return false;
-            }
-
-            return true;
+            return UserRegisterStatus.Success;
         }
 
         public bool SendEmail(string emailBody, string email)
@@ -94,7 +63,6 @@ namespace ITPLibrary.Api.Core.Services.Implementations
             }
         }
 
-
         public async Task<User> GetUser(UserLoginDto user)
         {
             return await _repository.GetUser(user.Email, user.Password);
@@ -105,9 +73,17 @@ namespace ITPLibrary.Api.Core.Services.Implementations
             return await _repository.GetUser(email);
         }
 
-        public async Task<UserRegisterStatus> RegisterUser(UserRegisterDto newUser)
+        public async Task<bool> RegisterUser(UserRegisterDto newUser)
         {
-            return await _repository.RegisterUser(_mapper.Map<User>(newUser));
+            HashWithSaltResult hashResultSha256 = _passwordHasher
+                   .HashWithSalt(newUser.Password, 64, SHA256.Create());
+
+            var user = _mapper.Map<User>(newUser);
+
+            user.Salt = hashResultSha256.Salt;
+            user.HashedPassword = hashResultSha256.Digest;
+
+            return await _repository.RegisterUser(user);
         }
     }
 }

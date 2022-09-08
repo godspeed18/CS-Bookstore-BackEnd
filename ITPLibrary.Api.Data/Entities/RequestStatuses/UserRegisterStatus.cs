@@ -3,7 +3,8 @@
     public enum UserRegisterStatus
     {
         Success,
-        NotValidEmail,
+        EmailNotValid,
+        NameNotValid,
         WeakPassword,
         PasswordsDontMatch,
         EmailAlreadyRegistered

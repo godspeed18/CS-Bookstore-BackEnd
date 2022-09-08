@@ -1,6 +1,5 @@
 ﻿using ITPLibrary.Api.Data.Data;
 using ITPLibrary.Api.Data.Entities;
-using ITPLibrary.Api.Data.Entities.RequestStatuses;
 using ITPLibrary.Api.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,9 +14,9 @@ namespace ITPLibrary.Api.Data.Repositories.Implementations
             _db = db;
         }
 
-        public async Task<User> GetUser(string email, string password)
+         public async Task<User> GetUser(string email, string password)
         {
-            return await _db.Users.FirstOrDefaultAsync((u => u.Email == email && u.Password == password));
+            return await _db.Users.FirstOrDefaultAsync((u => u.Email == email && u.HashedPassword == password));
         }
 
         public async Task<User> GetUser(string email)
@@ -26,22 +25,22 @@ namespace ITPLibrary.Api.Data.Repositories.Implementations
         }
 
         //to be changed when i switch back to the user management branch
-        public async Task<UserRegisterStatus> RegisterUser(User newUser)
+         public async Task<bool> IsEmailAlreadyRegistered(string email)
         {
-            string email = _db
-                         .Users
-                         .Where(u => u.Email == newUser.Email)
-                         .Select(u => u.Email)
-                         .FirstOrDefault();
+            var response = await _db.Users.Where(u => u.Email == email).FirstOrDefaultAsync();
+            return response != null;
+        }
 
-            if (email == null)
+        public async Task<bool> RegisterUser(User newUser)
+        {
+            if (await IsEmailAlreadyRegistered(newUser.Email) == false)
             {
                 await _db.AddAsync(newUser);
                 await _db.SaveChangesAsync();
-                return UserRegisterStatus.Success;
+                return true;
             }
 
-            return UserRegisterStatus.EmailAlreadyRegistered;
+            return false;
         }
     }
 }

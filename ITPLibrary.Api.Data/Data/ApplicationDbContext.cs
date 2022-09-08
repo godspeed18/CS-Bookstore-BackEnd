@@ -24,7 +24,7 @@ namespace ITPLibrary.Api.Data.Data
             modelBuilder.Entity<User>().HasKey(p => p.Id);
             modelBuilder.Entity<User>().Property(p => p.Name).HasMaxLength(UserValidationRules.NameMaxLength);
             modelBuilder.Entity<User>().Property(p => p.Email).HasMaxLength(UserValidationRules.EmailMaxLength);
-            modelBuilder.Entity<User>().Property(p => p.Password).HasMaxLength(UserValidationRules.PasswordMaxLength);
+            modelBuilder.Entity<User>().Property(p => p.HashedPassword).HasMaxLength(UserValidationRules.PasswordMaxLength);
 
             modelBuilder.Entity<BookDetails>().Property(p => p.Description)
                 .HasMaxLength(BookDetailsValidationRules.DescriptionMaxLength);

@@ -32,7 +32,7 @@ namespace ITPLibrary.Api.Core.Services.Implementations
             return new SuccessfulLoginDto()
             {
                 Email = user.Email,
-                Password = user.Password,
+                Password = user.HashedPassword,
                 Name = user.Name,
                 Token = token
             };
@@ -56,7 +56,7 @@ namespace ITPLibrary.Api.Core.Services.Implementations
                         new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.Ticks.ToString()),
                         new Claim("Id", user.Id.ToString()),
                         new Claim("Name", user.Name),
-                        new Claim("Password", user.Password),
+                        new Claim("Password", user.HashedPassword),
                         new Claim("Email", user.Email)
             };
         }

@@ -2,8 +2,8 @@
 using ITPLibrary.Api.Core.Dtos;
 using ITPLibrary.Api.Core.Services.Interfaces;
 using ITPLibrary.Api.Data.Entities;
+using ITPLibrary.Api.Data.Entities.ErrorMessages;
 using ITPLibrary.Api.Data.Entities.RequestStatuses;
-using ITPLibrary.Api.Data.Entities.Validation_Rules.Validation_Regex;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,7 +28,7 @@ namespace ITPLibrary.Api.Controllers
 
             if (user != null)
             {
-                var response = _userService.SendEmail(user.Password, user.Email);
+                var response = _userService.SendEmail(user.HashedPassword, user.Email);
                 if (response == false)
                 {
                     return BadRequest("Oops... An error occured. The password recovery e-mail was not sent.");
@@ -65,31 +65,28 @@ namespace ITPLibrary.Api.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> RegisterUser(UserRegisterDto newUser)
         {
-            UserValidationRegex validation = new UserValidationRegex();
-
-            var dataValidationResponse = _userService.IsPasswordValid(validation, newUser.Password);
-            if (!dataValidationResponse)
-                return BadRequest("Password is not strong enough.");
-
-            dataValidationResponse = _userService.PasswordAndConfirmedPasswordMatch(newUser.Password, newUser.ConfirmedPassword);
-            if (!dataValidationResponse)
-                return BadRequest("Password and confirmed password do not match.");
-
-            dataValidationResponse = _userService.IsEmailValid(validation, newUser.Email);
-            if (!dataValidationResponse)
-                return BadRequest("E-mail is not valid");
-
-            dataValidationResponse = _userService.IsNameValid(validation, newUser.Name);
-            if (!dataValidationResponse)
-                return BadRequest("Name is not valid");
-
-            var repositoryResponse = await _userService.RegisterUser(newUser);
-            if (repositoryResponse == UserRegisterStatus.EmailAlreadyRegistered)
+            if (ModelState.IsValid)
             {
-                return Conflict("An account with this e-mail already exists.");
-            }
+                var dataValidationResponse = await _userService.ValidateUserData(newUser);
 
-            return Ok("Registration was successful.");
+                if (dataValidationResponse == UserRegisterStatus.Success)
+                {
+                    await _userService.RegisterUser(newUser);
+                    return Ok();
+                }
+                else if (dataValidationResponse == UserRegisterStatus.EmailAlreadyRegistered)
+                {
+                    return Conflict(UserErrorMessages.EmailAlreadyRegistered);
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         private async Task<User> GetUser(UserLoginDto user)
