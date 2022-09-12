@@ -12,18 +12,18 @@ namespace ITPLibrary.Api.Core.Dtos
 
         [Required]
         [MaxLength(UserValidationRules.NameMaxLength)]
-        [RegularExpression(UserValidationRegex.isNameValid, ErrorMessage = UserErrorMessages.NameNotValid)]
+        [RegularExpression(UserValidationRegex.isNameValid, ErrorMessage = UserMessages.NameNotValid)]
         public string Name { get; set; }
 
         [Required]
         [MaxLength(UserValidationRules.EmailMaxLength)]
-        [RegularExpression(UserValidationRegex.isEmailValid, ErrorMessage = UserErrorMessages.EmailNotValid)]
+        [RegularExpression(UserValidationRegex.isEmailValid, ErrorMessage = UserMessages.EmailNotValid)]
         public string Email { get; set; }
 
         [Required]
         [MinLength(UserValidationRules.PasswordMinLength)]
         [MaxLength(UserValidationRules.PasswordMaxLength)]
-        [RegularExpression(UserValidationRegex.isPasswordValid, ErrorMessage = UserErrorMessages.WeakPassword)]
+        [RegularExpression(UserValidationRegex.isPasswordValid, ErrorMessage = UserMessages.WeakPassword)]
         public string Password { get; set; }
 
         [Required]
@@ -37,7 +37,7 @@ namespace ITPLibrary.Api.Core.Dtos
 
             if (this.Password != this.ConfirmedPassword)
             {
-                results.Add(new ValidationResult(UserErrorMessages.PasswordsDontMatch));
+                results.Add(new ValidationResult(UserMessages.PasswordsDontMatch));
             }
 
             return results;

@@ -6,6 +6,8 @@ namespace ITPLibrary.Api.Core.Dtos
 {
     public class SuccessfulLoginDto
     {
+        public int Id { get; set; } 
+
         [Required]
         [MaxLength(UserValidationRules.NameMaxLength)]
         public string Name { get; set; }
@@ -14,10 +16,6 @@ namespace ITPLibrary.Api.Core.Dtos
         [MaxLength(UserValidationRules.EmailMaxLength)]
         public string Email { get; set; }
 
-        [Required]
-        [MinLength(UserValidationRules.PasswordMinLength)]
-        [MaxLength(UserValidationRules.PasswordMaxLength)]
-        public string Password { get; set; }
         public JwtSecurityToken Token { get; set; }
     }
 }

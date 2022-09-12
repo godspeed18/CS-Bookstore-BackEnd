@@ -31,17 +31,16 @@ namespace ITPLibrary.Api.Controllers
                 var response = _userService.SendEmail(user.HashedPassword, user.Email);
                 if (response == false)
                 {
-                    return BadRequest("Oops... An error occured. The password recovery e-mail was not sent.");
+                    return BadRequest(UserMessages.RecoveryEmailNotSent);
                 }
                 else
                 {
-                    return Ok("E-mail was successfully sent");
+                    return Ok(UserMessages.RecoveryEmailSent);
                 }
             }
-
             else
             {
-                return BadRequest("E-mail is not valid");
+                return BadRequest(UserMessages.EmailNotValid);
             }
         }
 
@@ -49,16 +48,13 @@ namespace ITPLibrary.Api.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> Login(UserLoginDto loginUser)
         {
-            var user = await GetUser(loginUser);
-            if (user != null)
+            var loginResponse = await _userLoginService.Login(loginUser);
+            if (loginResponse == null)
             {
-                return Ok(_userLoginService.Login(user));
+                return Unauthorized();
             }
 
-            else
-            {
-                return BadRequest("Invalid login credentials");
-            }
+            return Ok(loginResponse);
         }
 
         [HttpPost(UserControllerRoutes.RegisterUser)]
@@ -76,7 +72,7 @@ namespace ITPLibrary.Api.Controllers
                 }
                 else if (dataValidationResponse == UserRegisterStatus.EmailAlreadyRegistered)
                 {
-                    return Conflict(UserErrorMessages.EmailAlreadyRegistered);
+                    return Conflict(UserMessages.EmailAlreadyRegistered);
                 }
                 else
                 {

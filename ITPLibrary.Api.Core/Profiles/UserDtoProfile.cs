@@ -10,6 +10,7 @@ namespace ITPLibrary.Api.Core.Profiles
         {
             CreateMap<User, UserRegisterDto>();
             CreateMap<UserRegisterDto, User>();
+            CreateMap<User, SuccessfulLoginDto>();
         }
     }
 }

@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
+using ITPLibrary.Api.Core.Configurations;
 using ITPLibrary.Api.Core.Dtos;
+using ITPLibrary.Api.Core.GenericConstants;
 using ITPLibrary.Api.Core.PasswordHasher;
 using ITPLibrary.Api.Core.Services.Interfaces;
+using ITPLibrary.Api.Data.Configurations;
 using ITPLibrary.Api.Data.Entities;
 using ITPLibrary.Api.Data.Entities.RequestStatuses;
 using ITPLibrary.Api.Data.Repositories.Interfaces;
-using Microsoft.Extensions.Configuration;
 using System.Net;
 using System.Net.Mail;
 using System.Security.Cryptography;
@@ -16,15 +18,20 @@ namespace ITPLibrary.Api.Core.Services.Implementations
     {
         private readonly IUserRepository _repository;
         private readonly IMapper _mapper;
-        private readonly IConfiguration _configuration;
+        private readonly PasswordRecoveryConfiguration _passwordRecoveryConfiguration;
         private readonly PasswordWithSaltHasher _passwordHasher;
+        private readonly PortAndHostConfiguration _portAndHostConfiguration;
 
-        public UserService(IUserRepository repository, IMapper mapper, IConfiguration configuration)
+        public UserService(IUserRepository repository,
+                            IMapper mapper,
+                                PasswordRecoveryConfiguration passwordRecoveryConfiguration,
+                                    PortAndHostConfiguration portAndHostConfiguration)
         {
             _repository = repository;
             _mapper = mapper;
-            _configuration = configuration;
+            _passwordRecoveryConfiguration = passwordRecoveryConfiguration;
             _passwordHasher = new PasswordWithSaltHasher();
+            _portAndHostConfiguration = portAndHostConfiguration;
         }
 
         public async Task<UserRegisterStatus> ValidateUserData(UserRegisterDto newUser)
@@ -43,16 +50,16 @@ namespace ITPLibrary.Api.Core.Services.Implementations
             {
                 MailMessage message = new MailMessage();
                 SmtpClient smtp = new SmtpClient();
-                message.From = new MailAddress(_configuration["PasswordRecovery:Email"]);
+                message.From = new MailAddress(_passwordRecoveryConfiguration.Email);
                 message.To.Add(new MailAddress(email));
-                message.Subject = "Test";
+                message.Subject = GenericConstant.MessageSubject;
                 message.IsBodyHtml = true;
                 message.Body = emailBody;
-                smtp.Port = 587;
-                smtp.Host = "smtp.gmail.com";
+                smtp.Port = Int32.Parse(_portAndHostConfiguration.SmtpPort);
+                smtp.Host = _portAndHostConfiguration.SmtpHost;
                 smtp.EnableSsl = true;
                 smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential(_configuration["PasswordRecovery:Email"], _configuration["PasswordRecovery:Password"]);
+                smtp.Credentials = new NetworkCredential(_passwordRecoveryConfiguration.Email, _passwordRecoveryConfiguration.Password);
                 smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
                 smtp.Send(message);
                 return true;

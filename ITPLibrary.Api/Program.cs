@@ -1,5 +1,7 @@
+using ITPLibrary.Api.Core.Configurations;
 using ITPLibrary.Api.Core.Services.Implementations;
 using ITPLibrary.Api.Core.Services.Interfaces;
+using ITPLibrary.Api.Data.Configurations;
 using ITPLibrary.Api.Data.Data;
 using ITPLibrary.Api.Data.Data.Data_Provider.Implementations;
 using ITPLibrary.Api.Data.Data.Data_Provider.Interfaces;
@@ -23,6 +25,19 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Sample.FileUpload.Api", Version = "v1" });
     c.OperationFilter<SwaggerFileOperationFilter>();
 });
+
+var jwtConfig = new JwtConfiguration();
+builder.Configuration.Bind(nameof(JwtConfiguration), jwtConfig);
+builder.Services.AddSingleton(jwtConfig);
+
+var passwordRecoveryConfig = new PasswordRecoveryConfiguration();
+builder.Configuration.Bind(nameof(PasswordRecoveryConfiguration), passwordRecoveryConfig);
+builder.Services.AddSingleton(passwordRecoveryConfig);
+
+var portAndHostConfig = new PortAndHostConfiguration();
+builder.Configuration.Bind(nameof(PortAndHostConfiguration), portAndHostConfig);
+builder.Services.AddSingleton(portAndHostConfig);
+
 builder.Services.AddScoped<IUserLoginService, UserLoginService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -40,9 +55,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     {
         ValidateIssuer = true,
         ValidateAudience = true,
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        ValidAudience = jwtConfig.Audience,
+        ValidIssuer = jwtConfig.Issuer,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Key))
     };
 });
 

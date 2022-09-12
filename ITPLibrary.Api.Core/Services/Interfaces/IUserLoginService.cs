@@ -5,6 +5,6 @@ namespace ITPLibrary.Api.Core.Services.Interfaces
 {
     public interface IUserLoginService
     {
-        public Task<SuccessfulLoginDto> Login(User loginUser);
+        public Task<SuccessfulLoginDto> Login(UserLoginDto loginUser);
     }
 }
