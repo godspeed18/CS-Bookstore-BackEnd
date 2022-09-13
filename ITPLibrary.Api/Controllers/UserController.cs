@@ -13,35 +13,70 @@ namespace ITPLibrary.Api.Controllers
     {
         private readonly IUserService _userService;
         private readonly IUserLoginService _userLoginService;
+        private readonly IRecoveryCodeService _recoveryCodeService;
 
-        public UserController(IUserService userService, IUserLoginService userLoginService, IConfiguration configuration)
+        public UserController(IUserService userService,
+                                IUserLoginService userLoginService,
+                                    IConfiguration configuration,
+                                    IRecoveryCodeService recoveryCodeService)
         {
             _userService = userService;
             _userLoginService = userLoginService;
+            _recoveryCodeService = recoveryCodeService;
         }
 
-        [HttpPost(UserControllerRoutes.RecoverPassword)]
+        [HttpPost(UserControllerRoutes.RequestRecoverPassword)]
         [AllowAnonymous]
-        public async Task<ActionResult> RecoverPassword(string email)
+        public async Task<ActionResult> RequestPasswordRecovery(string email)
         {
             var user = await GetUser(email);
 
             if (user != null)
             {
-                var response = _userService.SendEmail(user.HashedPassword, user.Email);
-                if (response == false)
+                string recoveryCode = _userService.GenerateRandomRecoveryCode();
+
+                var userServiceResponse = await _userService.SendRecoveryEmail(user.Email, recoveryCode);
+                var recoveryCodeServiceResponse = await _recoveryCodeService.PostRecoveryCode(recoveryCode, user.Email);
+
+                if (userServiceResponse == false || recoveryCodeServiceResponse == false)
                 {
                     return BadRequest(UserMessages.RecoveryEmailNotSent);
                 }
+            }
+
+            return Ok(UserMessages.RecoveryEmailSent);
+        }
+
+        [HttpPost(UserControllerRoutes.ChangePassword)]
+        [AllowAnonymous]
+        public async Task<ActionResult> ChangePassword(ChangePasswordDto changePassword)
+        {
+            if (ModelState.IsValid != true)
+            {
+                return BadRequest();
+            }
+
+            var user = await _userService.GetUser(changePassword.Email);
+
+            if (user != default)
+            {
+                if (await _recoveryCodeService.IsCodeValid(user.Id, changePassword.RecoveryCode))
+                {
+                    var response = await _userService.ChangePassword(user.Id, changePassword.Password);
+                    await _recoveryCodeService.SetRecoveryCodeNotValid(changePassword.RecoveryCode);
+
+                    if (response != true)
+                    {
+                        return BadRequest(UserMessages.UnknownError);
+                    }
+                }
                 else
                 {
-                    return Ok(UserMessages.RecoveryEmailSent);
+                    return BadRequest(UserMessages.RecoveryCodeNotValid);
                 }
             }
-            else
-            {
-                return BadRequest(UserMessages.EmailNotValid);
-            }
+
+            return Ok(UserMessages.Success);
         }
 
         [HttpPost(UserControllerRoutes.LoginUser)]
@@ -83,11 +118,6 @@ namespace ITPLibrary.Api.Controllers
             {
                 return BadRequest();
             }
-        }
-
-        private async Task<User> GetUser(UserLoginDto user)
-        {
-            return await _userService.GetUser(user);
         }
 
         private async Task<User> GetUser(string email)

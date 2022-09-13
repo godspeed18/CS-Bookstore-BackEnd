@@ -4,6 +4,7 @@
     {
         public const string RegisterUser = "register";
         public const string LoginUser = "login";
-        public const string RecoverPassword = "recover-password";
+        public const string RequestRecoverPassword = "request-recover-password";
+        public const string ChangePassword = "change-password";
     }
 }

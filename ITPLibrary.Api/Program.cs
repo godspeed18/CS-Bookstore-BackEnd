@@ -41,9 +41,14 @@ builder.Services.AddSingleton(portAndHostConfig);
 builder.Services.AddScoped<IUserLoginService, UserLoginService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IBookDataProvider, BookDataProvider>();
+
+builder.Services.AddScoped<IRecoveryCodeRepository, RecoveryCodeRepository>();
+builder.Services.AddScoped<IRecoveryCodeService, RecoveryCodeService>();
+
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")
     ));

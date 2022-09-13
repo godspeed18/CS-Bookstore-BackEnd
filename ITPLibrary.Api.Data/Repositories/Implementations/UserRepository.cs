@@ -14,9 +14,20 @@ namespace ITPLibrary.Api.Data.Repositories.Implementations
             _db = db;
         }
 
-         public async Task<User> GetUser(string email, string password)
+        public async Task<bool> ChangePassword(int id, string hashedPassword, string salt)
         {
-            return await _db.Users.FirstOrDefaultAsync((u => u.Email == email && u.HashedPassword == password));
+            try
+            {
+                var result = await _db.Users.Where(u => u.Id == id).FirstOrDefaultAsync();
+                result.HashedPassword = hashedPassword;
+                result.Salt = salt;
+                await _db.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception exception)
+            {
+                return false;
+            }
         }
 
         public async Task<User> GetUser(string email)
@@ -25,7 +36,7 @@ namespace ITPLibrary.Api.Data.Repositories.Implementations
         }
 
         //to be changed when i switch back to the user management branch
-         public async Task<bool> IsEmailAlreadyRegistered(string email)
+        public async Task<bool> IsEmailAlreadyRegistered(string email)
         {
             var response = await _db.Users.Where(u => u.Email == email).FirstOrDefaultAsync();
             return response != null;

@@ -10,5 +10,7 @@
         public const string EmailAlreadyRegistered = "An account with this e-mail already exists.";
         public const string RecoveryEmailSent = "E-mail was successfully sent.";
         public const string RecoveryEmailNotSent = "Oops... An error occured. The password recovery e-mail was not sent.";
+        public const string RecoveryCodeNotValid = "The password recovery code is not valid";
+        public const string UnknownError = "An unexpected error has occured...";
     }
 }

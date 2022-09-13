@@ -14,6 +14,7 @@ namespace ITPLibrary.Api.Data.Data
         public DbSet<Book> Books { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<BookDetails> BookDetails { get; set; }
+        public DbSet<RecoveryCode> RecoveryCodes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

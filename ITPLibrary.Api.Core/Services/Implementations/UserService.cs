@@ -44,17 +44,18 @@ namespace ITPLibrary.Api.Core.Services.Implementations
             return UserRegisterStatus.Success;
         }
 
-        public bool SendEmail(string emailBody, string email)
+        public string GenerateRandomRecoveryCode()
+        {
+            RNG random = new RNG();
+            return random.GenerateRandomCryptographicKey(10);
+        }
+
+        public async Task<bool> SendRecoveryEmail(string email, string emailBody)
         {
             try
             {
-                MailMessage message = new MailMessage();
+                MailMessage message = BuildMailMessage(emailBody, email);
                 SmtpClient smtp = new SmtpClient();
-                message.From = new MailAddress(_passwordRecoveryConfiguration.Email);
-                message.To.Add(new MailAddress(email));
-                message.Subject = GenericConstant.MessageSubject;
-                message.IsBodyHtml = true;
-                message.Body = emailBody;
                 smtp.Port = Int32.Parse(_portAndHostConfiguration.SmtpPort);
                 smtp.Host = _portAndHostConfiguration.SmtpHost;
                 smtp.EnableSsl = true;
@@ -62,17 +63,13 @@ namespace ITPLibrary.Api.Core.Services.Implementations
                 smtp.Credentials = new NetworkCredential(_passwordRecoveryConfiguration.Email, _passwordRecoveryConfiguration.Password);
                 smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
                 smtp.Send(message);
+
                 return true;
             }
             catch (Exception)
             {
                 return false;
             }
-        }
-
-        public async Task<User> GetUser(UserLoginDto user)
-        {
-            return await _repository.GetUser(user.Email, user.Password);
         }
 
         public async Task<User> GetUser(string email)
@@ -91,6 +88,25 @@ namespace ITPLibrary.Api.Core.Services.Implementations
             user.HashedPassword = hashResultSha256.Digest;
 
             return await _repository.RegisterUser(user);
+        }
+
+        private MailMessage BuildMailMessage(string emailBody, string email)
+        {
+            MailMessage message = new MailMessage();
+            message.From = new MailAddress(_passwordRecoveryConfiguration.Email);
+            message.To.Add(new MailAddress(email));
+            message.Subject = GenericConstant.MessageSubject;
+            message.IsBodyHtml = true;
+            message.Body = emailBody;
+            return message;
+        }
+
+        public async Task<bool> ChangePassword(int id, string password)
+        {
+            HashWithSaltResult hashResultSha256 = _passwordHasher
+              .HashWithSalt(password, 64, SHA256.Create());
+
+            return await _repository.ChangePassword(id, hashResultSha256.Digest, hashResultSha256.Salt);
         }
     }
 }
