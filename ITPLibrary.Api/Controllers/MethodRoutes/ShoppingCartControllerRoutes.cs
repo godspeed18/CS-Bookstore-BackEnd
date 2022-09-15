@@ -2,6 +2,6 @@
 {
     public static class ShoppingCartControllerRoutes
     {
-        
+        public const string AddItem = "add-item";
     }
 }
