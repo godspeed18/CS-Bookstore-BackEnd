@@ -1,5 +1,6 @@
 ﻿using ITPLibrary.Api.Data.Entities;
 using ITPLibrary.Api.Data.Entities.Validation_Rules;
+using ITPLibrary.Api.Data.Entities.ValidationRules;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Drawing;

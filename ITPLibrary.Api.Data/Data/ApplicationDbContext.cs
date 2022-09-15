@@ -1,5 +1,6 @@
 using ITPLibrary.Api.Data.Entities;
 using ITPLibrary.Api.Data.Entities.Validation_Rules;
+using ITPLibrary.Api.Data.Entities.ValidationRules;
 using Microsoft.EntityFrameworkCore;
 
 namespace ITPLibrary.Api.Data.Data
@@ -26,9 +27,11 @@ namespace ITPLibrary.Api.Data.Data
             modelBuilder.Entity<User>().Property(p => p.Name).HasMaxLength(UserValidationRules.NameMaxLength);
             modelBuilder.Entity<User>().Property(p => p.Email).HasMaxLength(UserValidationRules.EmailMaxLength);
             modelBuilder.Entity<User>().Property(p => p.HashedPassword).HasMaxLength(UserValidationRules.PasswordMaxLength);
+            modelBuilder.Entity<User>().Property(p => p.Salt).HasMaxLength(UserValidationRules.SaltMaxLength);
 
-            modelBuilder.Entity<BookDetails>().Property(p => p.Description)
-                .HasMaxLength(BookDetailsValidationRules.DescriptionMaxLength);
+            modelBuilder.Entity<BookDetails>().Property(p => p.Description).HasMaxLength(BookDetailsValidationRules.DescriptionMaxLength);
+
+            modelBuilder.Entity<RecoveryCode>().Property(p => p.Code).HasMaxLength(RecoveryCodeValidationRules.RecoveryCodeMaxLength);
 
             base.OnModelCreating(modelBuilder);
         }

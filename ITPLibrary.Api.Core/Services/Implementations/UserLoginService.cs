@@ -22,12 +22,12 @@ namespace ITPLibrary.Api.Core.Services.Implementations
         private readonly PasswordWithSaltHasher _passwordHasher;
         private readonly JwtConfiguration _jwtConfiguration;
 
-        public UserLoginService(ApplicationDbContext db, IMapper mapper,JwtConfiguration jwtConfiguration)
+        public UserLoginService(ApplicationDbContext db, IMapper mapper, JwtConfiguration jwtConfiguration)
         {
             _db = db;
             _mapper = mapper;
             _passwordHasher = new PasswordWithSaltHasher();
-            _jwtConfiguration = jwtConfiguration;  
+            _jwtConfiguration = jwtConfiguration;
         }
 
         public async Task<SuccessfulLoginDto> Login(UserLoginDto user)

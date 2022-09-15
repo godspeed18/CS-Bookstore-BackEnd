@@ -1,4 +1,4 @@
-﻿namespace ITPLibrary.Api.Data.Entities.Validation_Rules
+﻿namespace ITPLibrary.Api.Data.Entities.ValidationRules
 {
     public static class BookDetailsValidationRules
     {

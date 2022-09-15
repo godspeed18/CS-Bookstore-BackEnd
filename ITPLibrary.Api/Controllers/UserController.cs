@@ -6,6 +6,7 @@ using ITPLibrary.Api.Data.Entities.ErrorMessages;
 using ITPLibrary.Api.Data.Entities.RequestStatuses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace ITPLibrary.Api.Controllers
 {
@@ -89,7 +90,8 @@ namespace ITPLibrary.Api.Controllers
                 return Unauthorized();
             }
 
-            return Ok(loginResponse);
+            return Ok(new JwtSecurityTokenHandler().
+                            WriteToken(loginResponse.Token));
         }
 
         [HttpPost(UserControllerRoutes.RegisterUser)]

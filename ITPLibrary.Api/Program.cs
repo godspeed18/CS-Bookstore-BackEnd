@@ -1,4 +1,5 @@
 using ITPLibrary.Api.Core.Configurations;
+using ITPLibrary.Api.Core.GenericConstants;
 using ITPLibrary.Api.Core.Services.Implementations;
 using ITPLibrary.Api.Core.Services.Interfaces;
 using ITPLibrary.Api.Data.Configurations;
@@ -16,14 +17,39 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(option =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Sample.FileUpload.Api", Version = "v1" });
-    c.OperationFilter<SwaggerFileOperationFilter>();
+    option.SwaggerDoc(GenericConstant.SwaggerDocVersion, new OpenApiInfo { Title = GenericConstant.SwaggerDocTitle, Version = GenericConstant.SwaggerDocVersion });
+    option.OperationFilter<SwaggerFileOperationFilter>();
+
+    option.AddSecurityDefinition(GenericConstant.SecurityDef, new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = GenericConstant.SecurityDefDescription,
+        Name = GenericConstant.SecurityDefName,
+        Type = SecuritySchemeType.Http,
+        BearerFormat = GenericConstant.SecurityDefBearerFormat,
+        Scheme = GenericConstant.SecurityDefScheme,
+    });
+
+    option.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id=GenericConstant.SecurityReqId
+                }
+            },
+            new string[]{}
+        }
+
+});
 });
 
 var jwtConfig = new JwtConfiguration();
@@ -49,9 +75,13 @@ builder.Services.AddScoped<IBookDataProvider, BookDataProvider>();
 builder.Services.AddScoped<IRecoveryCodeRepository, RecoveryCodeRepository>();
 builder.Services.AddScoped<IRecoveryCodeService, RecoveryCodeService>();
 
+
+builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
+builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
+
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
-    builder.Configuration.GetConnectionString("DefaultConnection")
-    ));
+    builder.Configuration.GetConnectionString("DefaultConnection")));
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.RequireHttpsMetadata = false;
@@ -60,6 +90,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     {
         ValidateIssuer = true,
         ValidateAudience = true,
+        ValidateIssuerSigningKey = true,
+        ValidateLifetime = true,
         ValidAudience = jwtConfig.Audience,
         ValidIssuer = jwtConfig.Issuer,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Key))
@@ -82,9 +114,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
 app.UseAuthentication();
+
+app.UseAuthorization();
 
 app.MapControllers();
 
