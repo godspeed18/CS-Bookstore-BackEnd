@@ -40,6 +40,40 @@ namespace ITPLibrary.Api.Data.Repositories.Implementations
             return false;
         }
 
+        public async Task<bool> DeleteBookFromCart(int userId, int bookId)
+        {
+            var shoppingCartItem = await GetBookFromCart(userId, bookId);
+            if (shoppingCartItem == null)
+            {
+                return false;
+            }
+
+            _db.ShoppingCarts.Remove(shoppingCartItem);
+            await _db.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> DecrementBookQuantityInCart(int userId, int bookId)
+        {
+            var shoppingCartItem = await GetBookFromCart(userId, bookId);
+            if (shoppingCartItem == null)
+            {
+                return false;
+            }
+
+            shoppingCartItem.Quantity--;
+            await _db.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<int> GetBookQuantity(int userId, int bookId)
+        {
+            var shoppingCartItem = await GetBookFromCart(userId, bookId);
+            return shoppingCartItem == null ? 0 : shoppingCartItem.Quantity;
+        }
+
         public async Task<IEnumerable<ShoppingCart>> GetUserShoppingCart(int userId)
         {
             return await _db.ShoppingCarts.Where(u => u.UserId == userId).ToListAsync();

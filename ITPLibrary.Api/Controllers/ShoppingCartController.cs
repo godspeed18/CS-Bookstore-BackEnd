@@ -18,7 +18,19 @@ namespace ITPLibrary.Api.Controllers
             _service = service;
         }
 
-        [HttpPost(ShoppingCartControllerRoutes.AddItem)]
+        [HttpDelete($"{ShoppingCartControllerRoutes.DeleteItem}/{{bookId}}")]
+        public async Task<ActionResult> DeleteItem([FromRoute]int bookId)
+        {
+            var serviceResponse = await _service.DeleteBookFromCart(GetUserIdFromToken(), bookId);
+            if (serviceResponse == false)
+            {
+                return BadRequest(ShoppingCartMessages.FailedToDeleteFromCart);
+            }
+
+            return Ok(ShoppingCartMessages.Success);
+        }
+
+        [HttpPost($"{ShoppingCartControllerRoutes.AddItem}/{{bookId}}")]
         public async Task<ActionResult> PostItem([FromRoute] int bookId)
         {
             var serviceResponse = await _service.PostBookInCart(GetUserIdFromToken(), bookId);
@@ -30,6 +42,8 @@ namespace ITPLibrary.Api.Controllers
 
             return Ok(ShoppingCartMessages.Success);
         }
+
+    
 
         [HttpGet(ShoppingCartControllerRoutes.GetShoppingCart)]
         public async Task<ActionResult> GetShoppingCart()

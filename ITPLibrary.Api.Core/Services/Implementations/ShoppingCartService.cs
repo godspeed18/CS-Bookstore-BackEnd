@@ -19,6 +19,28 @@ namespace ITPLibrary.Api.Core.Services.Implementations
             _bookRepository = bookRepository;
         }
 
+        public async Task<bool> DeleteBookFromCart(int userId, int bookId)
+        {
+            var bookQuantity = await _shoppingCartRepository.GetBookQuantity(userId, bookId);
+
+            if (bookQuantity == 0)
+            {
+                return false;
+            }
+
+            if (bookQuantity == 1)
+            {
+                await _shoppingCartRepository.DeleteBookFromCart(userId, bookId);
+            }
+
+            if (bookQuantity > 1)
+            {
+                await _shoppingCartRepository.DecrementBookQuantityInCart(userId, bookId);
+            }
+
+            return true;
+        }
+
         public async Task<bool> PostBookInCart(int userId, int bookId)
         {
             if (await _bookRepository.GetBookById(bookId) == null)
