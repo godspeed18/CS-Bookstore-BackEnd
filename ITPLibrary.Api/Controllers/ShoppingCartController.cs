@@ -21,10 +21,7 @@ namespace ITPLibrary.Api.Controllers
         [HttpPost(ShoppingCartControllerRoutes.AddItem)]
         public async Task<ActionResult> PostItem([FromRoute] int bookId)
         {
-            var userIdentity = HttpContext.User.Identity as ClaimsIdentity;
-            int userId = int.Parse(userIdentity.FindFirst(GenericConstant.IdClaim).Value);
-
-            var serviceResponse = await _service.PostBookInCart(userId, bookId);
+            var serviceResponse = await _service.PostBookInCart(GetUserIdFromToken(), bookId);
 
             if (serviceResponse != true)
             {
@@ -32,6 +29,21 @@ namespace ITPLibrary.Api.Controllers
             }
 
             return Ok(ShoppingCartMessages.Success);
+        }
+
+        [HttpGet(ShoppingCartControllerRoutes.GetShoppingCart)]
+        public async Task<ActionResult> GetShoppingCart()
+        {
+            var shoppingCart = await _service.GetShoppingCart(GetUserIdFromToken());
+
+            return Ok(shoppingCart);
+        }
+
+        private int GetUserIdFromToken()
+        {
+            var userIdentity = HttpContext.User.Identity as ClaimsIdentity;
+            int userId = int.Parse(userIdentity.FindFirst(GenericConstant.IdClaim).Value);
+            return userId;
         }
     }
 }

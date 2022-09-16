@@ -40,6 +40,8 @@ namespace ITPLibrary.Api.Core.Profiles
                 .ForMember(dest => dest.Thumbnail,
                             opt => opt.MapFrom
                                 (src => ImageConverter.ByteArrayToImage(src.Thumbnail)));
+
+            CreateMap<Book, BookDisplayDto>();
         }
     }
 }

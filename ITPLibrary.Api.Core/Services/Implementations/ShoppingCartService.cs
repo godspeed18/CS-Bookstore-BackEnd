@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ITPLibrary.Api.Core.Dtos;
 using ITPLibrary.Api.Core.Services.Interfaces;
 using ITPLibrary.Api.Data.Entities;
 using ITPLibrary.Api.Data.Repositories.Interfaces;
@@ -45,6 +46,21 @@ namespace ITPLibrary.Api.Core.Services.Implementations
             }
 
             return true;
+        }
+
+        public async Task<IEnumerable<BookDisplayDto>> GetShoppingCart(int userId)
+        {
+            var shoppingCart = await _shoppingCartRepository.GetUserShoppingCart(userId);
+            List<BookDisplayDto> shoppingCartBooks = new List<BookDisplayDto>();
+
+            foreach (var shoppingCartItem in shoppingCart)
+            {
+                var currentBook = _mapper.Map<BookDisplayDto>(await _bookRepository.GetBookById(shoppingCartItem.BookId));
+                currentBook.Quantity = shoppingCartItem.Quantity;
+                shoppingCartBooks.Add(currentBook);
+            }
+
+            return shoppingCartBooks;
         }
     }
 }

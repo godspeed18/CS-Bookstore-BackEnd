@@ -39,5 +39,10 @@ namespace ITPLibrary.Api.Data.Repositories.Implementations
 
             return false;
         }
+
+        public async Task<IEnumerable<ShoppingCart>> GetUserShoppingCart(int userId)
+        {
+            return await _db.ShoppingCarts.Where(u => u.UserId == userId).ToListAsync();
+        }
     }
 }
