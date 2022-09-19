@@ -1,10 +1,9 @@
 ﻿using ITPLibrary.Api.Controllers.MethodRoutes;
-using ITPLibrary.Api.Core.GenericConstants;
 using ITPLibrary.Api.Core.Services.Interfaces;
 using ITPLibrary.Api.Data.Entities.RequestMessages;
+using ITPLibrary.Api.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace ITPLibrary.Api.Controllers
 {
@@ -21,7 +20,8 @@ namespace ITPLibrary.Api.Controllers
         [HttpDelete($"{ShoppingCartControllerRoutes.DeleteItem}/{{bookId}}")]
         public async Task<ActionResult> DeleteItem([FromRoute]int bookId)
         {
-            var serviceResponse = await _service.DeleteBookFromCart(GetUserIdFromToken(), bookId);
+            var serviceResponse = await _service.DeleteBookFromCart(GenericMethods.GetUserIdFromToken
+                                                (HttpContext), bookId);
             if (serviceResponse == false)
             {
                 return BadRequest(ShoppingCartMessages.FailedToDeleteFromCart);
@@ -33,7 +33,8 @@ namespace ITPLibrary.Api.Controllers
         [HttpPost($"{ShoppingCartControllerRoutes.AddItem}/{{bookId}}")]
         public async Task<ActionResult> PostItem([FromRoute] int bookId)
         {
-            var serviceResponse = await _service.PostBookInCart(GetUserIdFromToken(), bookId);
+            var serviceResponse = await _service.PostBookInCart(GenericMethods.GetUserIdFromToken
+                                                   (HttpContext), bookId);
 
             if (serviceResponse != true)
             {
@@ -43,21 +44,15 @@ namespace ITPLibrary.Api.Controllers
             return Ok(ShoppingCartMessages.Success);
         }
 
-    
+   
 
         [HttpGet(ShoppingCartControllerRoutes.GetShoppingCart)]
         public async Task<ActionResult> GetShoppingCart()
         {
-            var shoppingCart = await _service.GetShoppingCart(GetUserIdFromToken());
+            var shoppingCart = await _service.GetShoppingCart(
+                        GenericMethods.GetUserIdFromToken(HttpContext));
 
             return Ok(shoppingCart);
-        }
-
-        private int GetUserIdFromToken()
-        {
-            var userIdentity = HttpContext.User.Identity as ClaimsIdentity;
-            int userId = int.Parse(userIdentity.FindFirst(GenericConstant.IdClaim).Value);
-            return userId;
         }
     }
 }

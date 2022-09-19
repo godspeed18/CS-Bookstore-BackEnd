@@ -75,9 +75,13 @@ builder.Services.AddScoped<IBookDataProvider, BookDataProvider>();
 builder.Services.AddScoped<IRecoveryCodeRepository, RecoveryCodeRepository>();
 builder.Services.AddScoped<IRecoveryCodeService, RecoveryCodeService>();
 
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
 builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
+
+builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")));

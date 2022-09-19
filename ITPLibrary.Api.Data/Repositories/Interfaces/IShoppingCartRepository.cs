@@ -11,5 +11,6 @@ namespace ITPLibrary.Api.Data.Repositories.Interfaces
         public Task<bool> DecrementBookQuantityInCart(int userId, int bookId);
         public Task<int> GetBookQuantity(int userId, int bookId); 
         public Task<IEnumerable<ShoppingCart>> GetUserShoppingCart(int userId);
+        public Task EmptyCart(int userId);
     }
 }

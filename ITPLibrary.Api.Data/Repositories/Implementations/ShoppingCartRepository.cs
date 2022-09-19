@@ -76,7 +76,24 @@ namespace ITPLibrary.Api.Data.Repositories.Implementations
 
         public async Task<IEnumerable<ShoppingCart>> GetUserShoppingCart(int userId)
         {
-            return await _db.ShoppingCarts.Where(u => u.UserId == userId).ToListAsync();
+            var shoppingCart = await _db.ShoppingCarts.Where(u => u.UserId == userId).ToListAsync();
+            foreach (var item in shoppingCart)
+            {
+                item.Book = await _db.Books.Where(u => u.Id == item.BookId).FirstOrDefaultAsync();
+            }
+
+            return shoppingCart;
+        }
+
+        public async Task EmptyCart(int userId)
+        {
+            var shoppingCart = await _db.ShoppingCarts.Where(u => u.UserId == userId).ToListAsync();
+            foreach (var item in shoppingCart)
+            {
+                _db.ShoppingCarts.Remove(item);
+            }
+
+            await _db.SaveChangesAsync();
         }
     }
 }
