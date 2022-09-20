@@ -35,6 +35,7 @@ namespace ITPLibrary.Api.Core.Profiles
                             opt => opt.MapFrom
                                 (src => GenericMethods.CalculateNumberOfItems(src.Items)));
 
+            CreateMap<UpdateOrderDto, Order>();
         }
     }
 }

@@ -25,5 +25,16 @@ namespace ITPLibrary.Api.Data.Repositories.Implementations
             return await _db.Orders.Where(u => u.UserId == userId)
                     .Include(d => d.Items).ToListAsync();
         }
+
+        public async Task UpdateOrder(Order updatedOrder)
+        {
+            _db.Orders.Update(updatedOrder);
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task<Order> GetOrder(int orderId)
+        {
+            return await _db.Orders.Where(u => u.Id == orderId).FirstOrDefaultAsync();
+        }
     }
 }

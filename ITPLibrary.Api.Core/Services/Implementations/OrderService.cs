@@ -51,6 +51,11 @@ namespace ITPLibrary.Api.Core.Services.Implementations
             return true;
         }
 
+        public async Task<bool> UpdateOrder(UpdateOrderDto updatedOrder)
+        {
+
+        }
+
         public async Task<IEnumerable<OrderDisplayDto>> GetAllOrders(int userId)
         {
             var orders = await _orderRepository.GetOrders(userId);
@@ -59,8 +64,21 @@ namespace ITPLibrary.Api.Core.Services.Implementations
                 return null;
             }
 
-            List<OrderDisplayDto> mappedOrders = _mapper.Map<List<OrderDisplayDto>>(orders);  
+            List<OrderDisplayDto> mappedOrders = _mapper.Map<List<OrderDisplayDto>>(orders);
+            foreach (var order in mappedOrders)
+            {
+                order.NumberOfItems = await GetNumberOfItems(order.Id);
+            }
+
             return mappedOrders;
+        }
+
+        private async Task<Order> MapUpdateOrderToOrder(UpdateOrderDto updatedOrder)
+        {
+            Order unchangedOrder = await _orderRepository.GetOrder(updatedOrder.Id);
+            Order mappedOrder = _mapper.Map<Order>(updatedOrder);
+            mappedOrder.OrderStatusId = unchangedOrder.OrderStatusId;
+            mappedOrder.UserId = unchangedOrder.UserId;
         }
 
         private static int CalculateOrderPrice(IEnumerable<ShoppingCart> productList)

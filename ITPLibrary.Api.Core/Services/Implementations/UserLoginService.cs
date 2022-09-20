@@ -38,7 +38,7 @@ namespace ITPLibrary.Api.Core.Services.Implementations
                 && await IsPasswordCorrect(user, userToBeLogged.Salt))
             {
                 Claim[] claims = GetClaims(userToBeLogged);
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfiguration.Key));
+                var key = new SymmetricSecurityKey(Convert.FromBase64String(_jwtConfiguration.Key));
                 var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
                 JwtSecurityToken token = GetToken(claims, signIn);
@@ -61,7 +61,7 @@ namespace ITPLibrary.Api.Core.Services.Implementations
                _jwtConfiguration.Issuer,
                _jwtConfiguration.Audience,
                 claims,
-                expires: DateTime.UtcNow.AddMinutes(10),
+                expires: DateTime.UtcNow.AddDays(1),
                 signingCredentials: signIn);
         }
 

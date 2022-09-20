@@ -43,5 +43,11 @@ namespace ITPLibrary.Api.Controllers
 
             return Ok(orders);
         }
+
+        [HttpPut(OrderControllerRoutes.UpdateOrder)]
+        public async Task<ActionResult> UpdateOrder(UpdateOrderDto updatedOrder)
+        {
+
+        }
     }
 }
