@@ -1,6 +1,7 @@
 ﻿
 
 using ITPLibrary.Api.Data.Entities;
+using ITPLibrary.Api.Data.Entities.Enums;
 using ITPLibrary.Api.Data.Entities.ValidationRules;
 using System.ComponentModel.DataAnnotations;
 
@@ -17,5 +18,7 @@ namespace ITPLibrary.Api.Core.Dtos
 
         [MaxLength(OrderValidationRules.ObservationsMaxLength)]
         public string Observations { get; set; }
+
+        public PaymentTypeEnum PaymentType { get; set; }
     }
 }

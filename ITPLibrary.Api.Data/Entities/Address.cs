@@ -10,17 +10,14 @@ namespace ITPLibrary.Api.Data.Entities
     {
         public int Id { get; set; }
 
-        [Required]
         [RegularExpression(AddressValidationRegex.IsCountryNameValid, ErrorMessage = OrderMessages.CountryNameNotValid)]
         [MaxLength(AddressValidationRules.CountryMaxLength)]
         [MinLength(AddressValidationRules.CountryMinLength)]
         public string Country { get; set; }
 
-        [Required]
         [MaxLength(AddressValidationRules.AddressLineMaxLength)]
         public string AddressLine { get; set; }
 
-        [Required]
         [RegularExpression(AddressValidationRegex.IsPhoneNumberValid, ErrorMessage = OrderMessages.PhoneNumberNotValid)]
         [MaxLength(AddressValidationRules.PhoneNumberMaxLength)]
         [MinLength(AddressValidationRules.PhoneNumberMinLength)]

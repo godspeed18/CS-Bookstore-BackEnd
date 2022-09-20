@@ -34,8 +34,6 @@ namespace ITPLibrary.Api.Core.Profiles
                 .ForMember(dest => dest.NumberOfItems,
                             opt => opt.MapFrom
                                 (src => GenericMethods.CalculateNumberOfItems(src.Items)));
-
-            CreateMap<UpdateOrderDto, Order>();
         }
     }
 }

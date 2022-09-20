@@ -35,7 +35,7 @@ namespace ITPLibrary.Api.Controllers
         {
             int userId = GenericMethods.GetUserIdFromToken(HttpContext);
             var orders = await _orderService.GetAllOrders(userId);
-            
+
             if (orders == null)
             {
                 return BadRequest();
@@ -47,7 +47,13 @@ namespace ITPLibrary.Api.Controllers
         [HttpPut(OrderControllerRoutes.UpdateOrder)]
         public async Task<ActionResult> UpdateOrder(UpdateOrderDto updatedOrder)
         {
+            var updateResponse = await _orderService.UpdateOrder(updatedOrder);
+            if(updateResponse == false)
+            {
+                return BadRequest(OrderMessages.OrderNotUpdated);
+            }
 
+            return Ok(OrderMessages.Success);
         }
     }
 }
