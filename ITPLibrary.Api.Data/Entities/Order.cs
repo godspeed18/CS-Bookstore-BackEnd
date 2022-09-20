@@ -32,5 +32,7 @@ namespace ITPLibrary.Api.Data.Entities
         public User User { get; set; }
 
         public int TotalPrice { get; set; }
+
+        public List<OrderItem> Items { get; set; }
     }
 }

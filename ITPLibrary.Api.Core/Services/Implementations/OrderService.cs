@@ -51,6 +51,18 @@ namespace ITPLibrary.Api.Core.Services.Implementations
             return true;
         }
 
+        public async Task<IEnumerable<OrderDisplayDto>> GetAllOrders(int userId)
+        {
+            var orders = await _orderRepository.GetOrders(userId);
+            if (orders == null)
+            {
+                return null;
+            }
+
+            List<OrderDisplayDto> mappedOrders = _mapper.Map<List<OrderDisplayDto>>(orders);  
+            return mappedOrders;
+        }
+
         private static int CalculateOrderPrice(IEnumerable<ShoppingCart> productList)
         {
             int totalPrice = 0;

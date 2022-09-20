@@ -1,6 +1,7 @@
 ﻿using ITPLibrary.Api.Data.Data;
 using ITPLibrary.Api.Data.Entities;
 using ITPLibrary.Api.Data.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace ITPLibrary.Api.Data.Repositories.Implementations
 {
@@ -17,6 +18,12 @@ namespace ITPLibrary.Api.Data.Repositories.Implementations
         {
             await _db.Orders.AddAsync(newOrder);
             await _db.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Order>> GetOrders(int userId)
+        {
+            return await _db.Orders.Where(u => u.UserId == userId)
+                    .Include(d => d.Items).ToListAsync();
         }
     }
 }

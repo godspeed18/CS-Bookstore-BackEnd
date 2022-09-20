@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ITPLibrary.Api.Core.Dtos;
+using ITPLibrary.Api.Core.Generic;
 using ITPLibrary.Api.Data.Entities;
 
 namespace ITPLibrary.Api.Core.Profiles
@@ -25,6 +26,14 @@ namespace ITPLibrary.Api.Core.Profiles
                                 (src => src.BookId))
                 .ForMember(dest => dest.Id,
                             opt => opt.Ignore());
+
+            CreateMap<Order, OrderDisplayDto>()
+                .ForMember(dest => dest.Status,
+                            opt => opt.MapFrom
+                                (src => src.OrderStatusId))
+                .ForMember(dest => dest.NumberOfItems,
+                            opt => opt.MapFrom
+                                (src => GenericMethods.CalculateNumberOfItems(src.Items)));
 
         }
     }

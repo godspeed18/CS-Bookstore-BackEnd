@@ -29,5 +29,19 @@ namespace ITPLibrary.Api.Controllers
 
             return Ok(OrderMessages.Success);
         }
+
+        [HttpGet(OrderControllerRoutes.GetAllOrders)]
+        public async Task<ActionResult> GetAllOrders()
+        {
+            int userId = GenericMethods.GetUserIdFromToken(HttpContext);
+            var orders = await _orderService.GetAllOrders(userId);
+            
+            if (orders == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(orders);
+        }
     }
 }
