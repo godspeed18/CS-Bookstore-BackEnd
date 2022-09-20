@@ -28,7 +28,7 @@ namespace ITPLibrary.Api.Core.Services.Implementations
         public async Task<bool> UpdateOrder(UpdateOrderDto updatedOrder)
         {
             Order unchangedOrder = await _orderRepository.GetOrder(updatedOrder.Id);
-            
+
             if (unchangedOrder == null)
             {
                 return false;
@@ -178,7 +178,7 @@ namespace ITPLibrary.Api.Core.Services.Implementations
             return unchangedOrder;
         }
 
-        private async Task <Order> UpdateDispatchedOrder(UpdateOrderDto updatedOrder, Order unchangedOrder)
+        private async Task<Order> UpdateDispatchedOrder(UpdateOrderDto updatedOrder, Order unchangedOrder)
         {
             if (updatedOrder.DeliveryAddress.PhoneNumber != null)
             {
@@ -213,13 +213,13 @@ namespace ITPLibrary.Api.Core.Services.Implementations
                 updatedAddress.Country = newAddress.Country;
             }
 
-           await _orderRepository.UpdateAddress(updatedAddress);
+            await _orderRepository.UpdateAddress(updatedAddress);
         }
 
         private async Task UpdateDeliveryAddress(Order order, Address newAddress)
         {
             Address updatedAddress = order.DeliveryAddress;
-            
+
             if (newAddress.AddressLine != null)
             {
                 updatedAddress.AddressLine = newAddress.AddressLine;
