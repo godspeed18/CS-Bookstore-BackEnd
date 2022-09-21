@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using Constants;
 using ITPLibrary.Api.Core.Configurations;
 using ITPLibrary.Api.Core.Dtos;
-using ITPLibrary.Api.Core.GenericConstants;
 using ITPLibrary.Api.Core.PasswordHasher;
 using ITPLibrary.Api.Core.Services.Interfaces;
 using ITPLibrary.Api.Data.Configurations;
@@ -95,7 +95,7 @@ namespace ITPLibrary.Api.Core.Services.Implementations
             MailMessage message = new MailMessage();
             message.From = new MailAddress(_passwordRecoveryConfiguration.Email);
             message.To.Add(new MailAddress(email));
-            message.Subject = GenericConstant.MessageSubject;
+            message.Subject = CommonConstants.MessageSubject;
             message.IsBodyHtml = true;
             message.Body = emailBody;
             return message;

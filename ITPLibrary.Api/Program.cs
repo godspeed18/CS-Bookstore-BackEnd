@@ -1,5 +1,5 @@
+using Constants;
 using ITPLibrary.Api.Core.Configurations;
-using ITPLibrary.Api.Core.GenericConstants;
 using ITPLibrary.Api.Core.Services.Implementations;
 using ITPLibrary.Api.Core.Services.Interfaces;
 using ITPLibrary.Api.Data.Configurations;
@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,17 +21,17 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerGen(option =>
 {
-    option.SwaggerDoc(GenericConstant.SwaggerDocVersion, new OpenApiInfo { Title = GenericConstant.SwaggerDocTitle, Version = GenericConstant.SwaggerDocVersion });
+    option.SwaggerDoc(CommonConstants.SwaggerDocVersion, new OpenApiInfo { Title = CommonConstants.SwaggerDocTitle, Version = CommonConstants.SwaggerDocVersion });
     option.OperationFilter<SwaggerFileOperationFilter>();
 
-    option.AddSecurityDefinition(GenericConstant.SecurityDef, new OpenApiSecurityScheme
+    option.AddSecurityDefinition(CommonConstants.SecurityDef, new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
-        Description = GenericConstant.SecurityDefDescription,
-        Name = GenericConstant.SecurityDefName,
+        Description = CommonConstants.SecurityDefDescription,
+        Name = CommonConstants.SecurityDefName,
         Type = SecuritySchemeType.Http,
-        BearerFormat = GenericConstant.SecurityDefBearerFormat,
-        Scheme = GenericConstant.SecurityDefScheme,
+        BearerFormat = CommonConstants.SecurityDefBearerFormat,
+        Scheme = CommonConstants.SecurityDefScheme,
     });
 
     option.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -43,7 +42,7 @@ builder.Services.AddSwaggerGen(option =>
                 Reference = new OpenApiReference
                 {
                     Type=ReferenceType.SecurityScheme,
-                    Id=GenericConstant.SecurityReqId
+                    Id=CommonConstants.SecurityReqId
                 }
             },
             new string[]{}
@@ -85,6 +84,8 @@ builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {

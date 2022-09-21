@@ -1,6 +1,6 @@
-﻿namespace ITPLibrary.Api.Core.GenericConstants
+﻿namespace Constants
 {
-    public static class GenericConstant
+    public static class CommonConstants
     {
         public const string Jwt = "Jwt";
         public const string MessageSubject = "Test";
@@ -12,7 +12,7 @@
         public const string SecurityDef = "Bearer";
         public const string SecurityDefDescription = "Please enter a valid token";
         public const string SecurityDefName = "Authorization";
-        public const string SecurityDefBearerFormat = "JWT";    
+        public const string SecurityDefBearerFormat = "JWT";
         public const string SecurityDefScheme = "Bearer";
         public const string SecurityReqId = "Bearer";
     }

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using ITPLibrary.Api.Core.Dtos;
-using ITPLibrary.Api.Core.Generic;
 using ITPLibrary.Api.Data.Entities;
+using Methods;
 
 namespace ITPLibrary.Api.Core.Profiles
 {
@@ -33,7 +33,7 @@ namespace ITPLibrary.Api.Core.Profiles
                                 (src => src.OrderStatusId))
                 .ForMember(dest => dest.NumberOfItems,
                             opt => opt.MapFrom
-                                (src => GenericMethods.CalculateNumberOfItems(src.Items)));
+                                (src => CommonMethods.CalculateNumberOfItems(src.Items)));
         }
     }
 }

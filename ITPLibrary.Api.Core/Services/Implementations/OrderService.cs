@@ -154,12 +154,6 @@ namespace ITPLibrary.Api.Core.Services.Implementations
 
         private async Task<Order> UpdateProcessingOrder(UpdateOrderDto updatedOrder, Order unchangedOrder)
         {
-            if (updatedOrder.BillingAddress.PhoneNumber != null)
-            {
-                unchangedOrder.BillingAddress.PhoneNumber = updatedOrder.BillingAddress.PhoneNumber;
-                await _orderRepository.UpdateAddress(unchangedOrder.BillingAddress);
-            }
-
             if (updatedOrder.DeliveryAddress != null)
             {
                 await UpdateDeliveryAddress(unchangedOrder, updatedOrder.DeliveryAddress);
@@ -180,12 +174,6 @@ namespace ITPLibrary.Api.Core.Services.Implementations
 
         private async Task<Order> UpdateDispatchedOrder(UpdateOrderDto updatedOrder, Order unchangedOrder)
         {
-            if (updatedOrder.DeliveryAddress.PhoneNumber != null)
-            {
-                unchangedOrder.DeliveryAddress.PhoneNumber = updatedOrder.DeliveryAddress.PhoneNumber;
-                await _orderRepository.UpdateAddress(unchangedOrder.DeliveryAddress);
-            }
-
             if (updatedOrder.Observations != null)
             {
                 unchangedOrder.Observations = updatedOrder.Observations;
@@ -194,48 +182,22 @@ namespace ITPLibrary.Api.Core.Services.Implementations
             return unchangedOrder;
         }
 
-        private async Task UpdateBillingAddress(Order order, Address newAddress)
+        private async Task UpdateBillingAddress(Order order, UpdateAddressDto newAddress)
         {
-            Address updatedAddress = order.BillingAddress;
+            order.BillingAddress.AddressLine = newAddress.AddressLine;
+            order.BillingAddress.PhoneNumber = newAddress.PhoneNumber;
+            order.BillingAddress.Country = newAddress.Country;
 
-            if (newAddress.AddressLine != null)
-            {
-                updatedAddress.AddressLine = newAddress.AddressLine;
-            }
-
-            if (newAddress.PhoneNumber != null)
-            {
-                updatedAddress.PhoneNumber = newAddress.PhoneNumber;
-            }
-
-            if (newAddress.Country != null)
-            {
-                updatedAddress.Country = newAddress.Country;
-            }
-
-            await _orderRepository.UpdateAddress(updatedAddress);
+            await _orderRepository.UpdateAddress(order.BillingAddress);
         }
 
-        private async Task UpdateDeliveryAddress(Order order, Address newAddress)
+        private async Task UpdateDeliveryAddress(Order order, UpdateAddressDto newAddress)
         {
-            Address updatedAddress = order.DeliveryAddress;
+            order.DeliveryAddress.AddressLine = newAddress.AddressLine;
+            order.DeliveryAddress.PhoneNumber = newAddress.PhoneNumber;
+            order.DeliveryAddress.Country = newAddress.Country;
 
-            if (newAddress.AddressLine != null)
-            {
-                updatedAddress.AddressLine = newAddress.AddressLine;
-            }
-
-            if (newAddress.PhoneNumber != null)
-            {
-                updatedAddress.PhoneNumber = newAddress.PhoneNumber;
-            }
-
-            if (newAddress.Country != null)
-            {
-                updatedAddress.Country = newAddress.Country;
-            }
-
-            await _orderRepository.UpdateAddress(updatedAddress);
+            await _orderRepository.UpdateAddress(order.DeliveryAddress);
         }
     }
 }

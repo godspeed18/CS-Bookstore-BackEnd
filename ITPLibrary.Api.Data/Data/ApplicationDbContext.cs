@@ -1,16 +1,20 @@
+using ITPLibrary.Api.Data.Common;
 using ITPLibrary.Api.Data.Entities;
 using ITPLibrary.Api.Data.Entities.Enums;
 using ITPLibrary.Api.Data.Entities.Validation_Rules;
 using ITPLibrary.Api.Data.Entities.ValidationRules;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace ITPLibrary.Api.Data.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-        {
+        protected IHttpContextAccessor HttpContextAccessor { get; }
 
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
+        {
+            this.HttpContextAccessor = httpContextAccessor;
         }
 
         public DbSet<Book> Books { get; set; }
@@ -26,6 +30,8 @@ namespace ITPLibrary.Api.Data.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Order>().HasQueryFilter(p => p.UserId == CommonMethods.GetUserIdFromContext(HttpContextAccessor.HttpContext));
+
             modelBuilder.Entity<Order>().Property(p => p.Observations).HasMaxLength(OrderValidationRules.ObservationsMaxLength);
 
             modelBuilder.Entity<Address>().Property(p => p.AddressLine).HasMaxLength(AddressValidationRules.AddressLineMaxLength);
