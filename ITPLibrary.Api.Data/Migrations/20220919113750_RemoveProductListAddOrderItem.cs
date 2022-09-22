@@ -65,7 +65,7 @@ namespace ITPLibrary.Api.Data.Migrations
                 oldClrType: typeof(string),
                 oldType: "nvarchar(max)");
 
-           /* migrationBuilder.CreateTable(
+                migrationBuilder.CreateTable(
                 name: "OrderItem",
                 columns: table => new
                 {
@@ -120,7 +120,7 @@ namespace ITPLibrary.Api.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_OrderItem_OrderId",
                 table: "OrderItem",
-                column: "OrderId");*/
+                column: "OrderId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

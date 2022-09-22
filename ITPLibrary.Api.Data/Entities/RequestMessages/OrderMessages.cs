@@ -6,5 +6,6 @@
         public const string PhoneNumberNotValid = "Phone Number is not valid ";
         public const string Success = "Success";
         public const string OrderNotPlaced = "Something went wrong, your order was not succesfully placed.";
+        public const string OrderNotUpdated = "Something went wrong, your order was not successfully updated";
     }
 }

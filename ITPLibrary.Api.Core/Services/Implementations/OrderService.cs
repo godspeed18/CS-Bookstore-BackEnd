@@ -25,6 +25,34 @@ namespace ITPLibrary.Api.Core.Services.Implementations
             _orderItemRepository = orderItemRepository;
         }
 
+        public async Task<bool> UpdateOrder(UpdateOrderDto updatedOrder)
+        {
+            Order unchangedOrder = await _orderRepository.GetOrder(updatedOrder.Id);
+
+            if (unchangedOrder == null)
+            {
+                return false;
+            }
+
+            if (unchangedOrder.OrderStatusId == (int)OrderStatusEnum.New)
+            {
+                unchangedOrder = await UpdateNewOrder(updatedOrder, unchangedOrder);
+            }
+
+            if (unchangedOrder.OrderStatusId == (int)OrderStatusEnum.Processing)
+            {
+                unchangedOrder = await UpdateProcessingOrder(updatedOrder, unchangedOrder);
+            }
+
+            if (unchangedOrder.OrderStatusId == (int)OrderStatusEnum.Dispatched)
+            {
+                unchangedOrder = await UpdateDispatchedOrder(updatedOrder, unchangedOrder);
+            }
+
+            await _orderRepository.UpdateOrder(unchangedOrder);
+            return true;
+        }
+
         public async Task<bool> PostOrder(OrderPostDto newOrder, int userId)
         {
             if (newOrder == null)
@@ -59,7 +87,7 @@ namespace ITPLibrary.Api.Core.Services.Implementations
                 return null;
             }
 
-            List<OrderDisplayDto> mappedOrders = _mapper.Map<List<OrderDisplayDto>>(orders);  
+            List<OrderDisplayDto> mappedOrders = _mapper.Map<List<OrderDisplayDto>>(orders);
             return mappedOrders;
         }
 
@@ -97,6 +125,79 @@ namespace ITPLibrary.Api.Core.Services.Implementations
             mappedNewOrder.TotalPrice = totalPrice;
 
             return mappedNewOrder;
+        }
+
+        private async Task<Order> UpdateNewOrder(UpdateOrderDto updatedOrder, Order unchangedOrder)
+        {
+            if (updatedOrder.BillingAddress != null)
+            {
+                await UpdateBillingAddress(unchangedOrder, updatedOrder.BillingAddress);
+            }
+
+            if (updatedOrder.DeliveryAddress != null)
+            {
+                await UpdateDeliveryAddress(unchangedOrder, updatedOrder.DeliveryAddress);
+            }
+
+            if (updatedOrder.Observations != null)
+            {
+                unchangedOrder.Observations = updatedOrder.Observations;
+            }
+
+            if (updatedOrder.PaymentType != null)
+            {
+                unchangedOrder.PaymentTypeId = (int)updatedOrder.PaymentType;
+            }
+
+            return unchangedOrder;
+        }
+
+        private async Task<Order> UpdateProcessingOrder(UpdateOrderDto updatedOrder, Order unchangedOrder)
+        {
+            if (updatedOrder.DeliveryAddress != null)
+            {
+                await UpdateDeliveryAddress(unchangedOrder, updatedOrder.DeliveryAddress);
+            }
+
+            if (updatedOrder.Observations != null)
+            {
+                unchangedOrder.Observations = updatedOrder.Observations;
+            }
+
+            if (updatedOrder.PaymentType != null)
+            {
+                unchangedOrder.PaymentTypeId = (int)updatedOrder.PaymentType;
+            }
+
+            return unchangedOrder;
+        }
+
+        private async Task<Order> UpdateDispatchedOrder(UpdateOrderDto updatedOrder, Order unchangedOrder)
+        {
+            if (updatedOrder.Observations != null)
+            {
+                unchangedOrder.Observations = updatedOrder.Observations;
+            }
+
+            return unchangedOrder;
+        }
+
+        private async Task UpdateBillingAddress(Order order, AddressDto newAddress)
+        {
+            order.BillingAddress.AddressLine = newAddress.AddressLine;
+            order.BillingAddress.PhoneNumber = newAddress.PhoneNumber;
+            order.BillingAddress.Country = newAddress.Country;
+
+            await _orderRepository.UpdateAddress(order.BillingAddress);
+        }
+
+        private async Task UpdateDeliveryAddress(Order order, AddressDto newAddress)
+        {
+            order.DeliveryAddress.AddressLine = newAddress.AddressLine;
+            order.DeliveryAddress.PhoneNumber = newAddress.PhoneNumber;
+            order.DeliveryAddress.Country = newAddress.Country;
+
+            await _orderRepository.UpdateAddress(order.DeliveryAddress);
         }
     }
 }

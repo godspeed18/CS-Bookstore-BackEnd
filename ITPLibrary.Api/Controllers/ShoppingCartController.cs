@@ -1,7 +1,7 @@
-﻿using ITPLibrary.Api.Controllers.MethodRoutes;
+﻿using Common;
+using ITPLibrary.Api.Controllers.MethodRoutes;
 using ITPLibrary.Api.Core.Services.Interfaces;
 using ITPLibrary.Api.Data.Entities.RequestMessages;
-using ITPLibrary.Api.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +20,7 @@ namespace ITPLibrary.Api.Controllers
         [HttpDelete($"{ShoppingCartControllerRoutes.DeleteItem}/{{bookId}}")]
         public async Task<ActionResult> DeleteItem([FromRoute]int bookId)
         {
-            var serviceResponse = await _service.DeleteBookFromCart(GenericMethods.GetUserIdFromToken
+            var serviceResponse = await _service.DeleteBookFromCart(CommonMethods.GetUserIdFromContext
                                                 (HttpContext), bookId);
             if (serviceResponse == false)
             {
@@ -33,7 +33,7 @@ namespace ITPLibrary.Api.Controllers
         [HttpPost($"{ShoppingCartControllerRoutes.AddItem}/{{bookId}}")]
         public async Task<ActionResult> PostItem([FromRoute] int bookId)
         {
-            var serviceResponse = await _service.PostBookInCart(GenericMethods.GetUserIdFromToken
+            var serviceResponse = await _service.PostBookInCart(CommonMethods.GetUserIdFromContext
                                                    (HttpContext), bookId);
 
             if (serviceResponse != true)
@@ -50,7 +50,7 @@ namespace ITPLibrary.Api.Controllers
         public async Task<ActionResult> GetShoppingCart()
         {
             var shoppingCart = await _service.GetShoppingCart(
-                        GenericMethods.GetUserIdFromToken(HttpContext));
+                        CommonMethods.GetUserIdFromContext(HttpContext));
 
             return Ok(shoppingCart);
         }

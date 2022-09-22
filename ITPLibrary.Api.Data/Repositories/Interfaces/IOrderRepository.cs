@@ -6,5 +6,8 @@ namespace ITPLibrary.Api.Data.Repositories.Interfaces
     {
         public Task PostOrder(Order newOrder);
         public Task<IEnumerable<Order>> GetOrders(int userId);
+        public Task UpdateOrder(Order updatedOrder);
+        public Task<Order> GetOrder(int orderId);
+        public Task UpdateAddress(Address newAddress);
     }
 }

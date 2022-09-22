@@ -3,12 +3,10 @@ using ITPLibrary.Api.Data.Entities.ValidationRules;
 using ITPLibrary.Api.Data.Entities.ValidationRules.ValidationRegex;
 using System.ComponentModel.DataAnnotations;
 
-namespace ITPLibrary.Api.Data.Entities
+namespace ITPLibrary.Api.Core.Dtos
 {
-    public class Address
+    public class AddressDto
     {
-        public int Id { get; set; }
-
         [Required]
         [RegularExpression(AddressValidationRegex.IsCountryNameValid, ErrorMessage = OrderMessages.CountryNameNotValid)]
         [MaxLength(AddressValidationRules.CountryMaxLength)]
@@ -19,7 +17,7 @@ namespace ITPLibrary.Api.Data.Entities
         [MaxLength(AddressValidationRules.AddressLineMaxLength)]
         public string AddressLine { get; set; }
 
-        
+        [Required]
         [RegularExpression(AddressValidationRegex.IsPhoneNumberValid, ErrorMessage = OrderMessages.PhoneNumberNotValid)]
         [MaxLength(AddressValidationRules.PhoneNumberMaxLength)]
         [MinLength(AddressValidationRules.PhoneNumberMinLength)]

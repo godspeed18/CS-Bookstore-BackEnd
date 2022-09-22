@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using Constants;
 using ITPLibrary.Api.Core.Dtos;
-using ITPLibrary.Api.Core.GenericConstants;
 using ITPLibrary.Api.Core.PasswordHasher;
 using ITPLibrary.Api.Core.Services.Interfaces;
 using ITPLibrary.Api.Data.Configurations;
@@ -11,7 +11,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace ITPLibrary.Api.Core.Services.Implementations
 {
@@ -38,7 +37,7 @@ namespace ITPLibrary.Api.Core.Services.Implementations
                 && await IsPasswordCorrect(user, userToBeLogged.Salt))
             {
                 Claim[] claims = GetClaims(userToBeLogged);
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfiguration.Key));
+                var key = new SymmetricSecurityKey(Convert.FromBase64String(_jwtConfiguration.Key));
                 var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
                 JwtSecurityToken token = GetToken(claims, signIn);
@@ -61,7 +60,7 @@ namespace ITPLibrary.Api.Core.Services.Implementations
                _jwtConfiguration.Issuer,
                _jwtConfiguration.Audience,
                 claims,
-                expires: DateTime.UtcNow.AddMinutes(10),
+                expires: DateTime.UtcNow.AddMinutes(20),
                 signingCredentials: signIn);
         }
 
@@ -71,9 +70,9 @@ namespace ITPLibrary.Api.Core.Services.Implementations
                         new Claim(JwtRegisteredClaimNames.Sub, _jwtConfiguration.Subject),
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                         new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.Ticks.ToString()),
-                        new Claim(GenericConstant.IdClaim, user.Id.ToString()),
-                        new Claim(GenericConstant.NameClaim, user.Name),
-                        new Claim(GenericConstant.EmailClaim, user.Email)
+                        new Claim(CommonConstants.IdClaim, user.Id.ToString()),
+                        new Claim(CommonConstants.NameClaim, user.Name),
+                        new Claim(CommonConstants.EmailClaim, user.Email)
             };
         }
 
