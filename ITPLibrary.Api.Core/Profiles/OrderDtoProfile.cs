@@ -33,7 +33,19 @@ namespace ITPLibrary.Api.Core.Profiles
                                 (src => src.OrderStatusId))
                 .ForMember(dest => dest.NumberOfItems,
                             opt => opt.MapFrom
-                                (src => CommonMethods.CalculateNumberOfItems(src.Items)));
+                                (src => CalculateNumberOfItems(src.Items)));
         }
+
+        public static int CalculateNumberOfItems(IEnumerable<OrderItem> items)
+        {
+            int total = 0;
+            foreach (var item in items)
+            {
+                total += item.Quantity;
+            }
+
+            return total;
+        }
+
     }
 }
