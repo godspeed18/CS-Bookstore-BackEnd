@@ -1,8 +1,8 @@
-﻿using ITPLibrary.Api.Controllers.MethodRoutes;
+﻿using Common;
+using ITPLibrary.Api.Controllers.MethodRoutes;
 using ITPLibrary.Api.Core.Dtos;
 using ITPLibrary.Api.Core.Services.Interfaces;
 using ITPLibrary.Api.Data.Entities.RequestMessages;
-using Methods;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +21,7 @@ namespace ITPLibrary.Api.Controllers
         [HttpPost(OrderControllerRoutes.PostOrder)]
         public async Task<ActionResult> PostOrder(OrderPostDto newOrder)
         {
-            int userId = CommonMethods.GetUserIdFromToken(HttpContext);
+            int userId = CommonMethods.GetUserIdFromContext(HttpContext);
             if (await _orderService.PostOrder(newOrder, userId) == false)
             {
                 return BadRequest(OrderMessages.OrderNotPlaced);
@@ -33,7 +33,7 @@ namespace ITPLibrary.Api.Controllers
         [HttpGet(OrderControllerRoutes.GetAllOrders)]
         public async Task<ActionResult> GetAllOrders()
         {
-            int userId = CommonMethods.GetUserIdFromToken(HttpContext);
+            int userId = CommonMethods.GetUserIdFromContext(HttpContext);
             var orders = await _orderService.GetAllOrders(userId);
 
             if (orders == null)

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
-namespace ITPLibrary.Api.Data.Common
+namespace Common
 {
     public static class CommonMethods
     {

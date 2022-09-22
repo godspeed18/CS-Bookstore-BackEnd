@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using ITPLibrary.Api.Core.Dtos;
 using ITPLibrary.Api.Data.Entities;
-using Methods;
 
 namespace ITPLibrary.Api.Core.Profiles
 {
@@ -36,7 +35,7 @@ namespace ITPLibrary.Api.Core.Profiles
                                 (src => CalculateNumberOfItems(src.Items)));
         }
 
-        public static int CalculateNumberOfItems(IEnumerable<OrderItem> items)
+        private static int CalculateNumberOfItems(IEnumerable<OrderItem> items)
         {
             int total = 0;
             foreach (var item in items)
