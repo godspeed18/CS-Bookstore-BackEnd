@@ -15,7 +15,6 @@ namespace ITPLibrary.Api.Core.Dtos
         [MaxLength(AddressValidationRules.AddressLineMaxLength)]
         public string AddressLine { get; set; }
 
-
         [RegularExpression(AddressValidationRegex.IsPhoneNumberValid, ErrorMessage = OrderMessages.PhoneNumberNotValid)]
         [MaxLength(AddressValidationRules.PhoneNumberMaxLength)]
         [MinLength(AddressValidationRules.PhoneNumberMinLength)]
