@@ -10,11 +10,11 @@ namespace ITPLibrary.Api.Data.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        protected IHttpContextAccessor HttpContextAccessor { get; }
+        private readonly IHttpContextAccessor _httpContextAccesor;
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
         {
-            this.HttpContextAccessor = httpContextAccessor;
+            _httpContextAccesor = httpContextAccessor;
         }
 
         public DbSet<Book> Books { get; set; }
@@ -30,7 +30,7 @@ namespace ITPLibrary.Api.Data.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Order>().HasQueryFilter(p => p.UserId == CommonMethods.GetUserIdFromContext(HttpContextAccessor.HttpContext));
+            modelBuilder.Entity<Order>().HasQueryFilter(p => p.UserId == CommonMethods.GetUserIdFromContext(_httpContextAccesor.HttpContext));
 
             modelBuilder.Entity<Order>().Property(p => p.Observations).HasMaxLength(OrderValidationRules.ObservationsMaxLength);
 
