@@ -51,6 +51,10 @@ builder.Services.AddSwaggerGen(option =>
 });
 });
 
+var stripeConfig = new PaymentConfiguration();
+builder.Configuration.Bind(nameof(PaymentConfiguration), stripeConfig);
+builder.Services.AddSingleton(stripeConfig);
+
 var jwtConfig = new JwtConfiguration();
 builder.Configuration.Bind(nameof(JwtConfiguration), jwtConfig);
 builder.Services.AddSingleton(jwtConfig);

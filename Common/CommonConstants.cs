@@ -15,5 +15,7 @@
         public const string SecurityDefBearerFormat = "JWT";
         public const string SecurityDefScheme = "Bearer";
         public const string SecurityReqId = "Bearer";
+        public const string Product = "Product";
+        public const string Quantity = "Quantity";
     }
 }

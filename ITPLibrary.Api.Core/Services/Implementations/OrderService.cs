@@ -1,9 +1,14 @@
 ﻿using AutoMapper;
+using Common;
+using Constants;
+using ITPLibrary.Api.Core.Configurations;
 using ITPLibrary.Api.Core.Dtos;
 using ITPLibrary.Api.Core.Services.Interfaces;
 using ITPLibrary.Api.Data.Entities;
 using ITPLibrary.Api.Data.Entities.Enums;
+using ITPLibrary.Api.Data.Entities.RequestMessages;
 using ITPLibrary.Api.Data.Repositories.Interfaces;
+using Stripe;
 
 namespace ITPLibrary.Api.Core.Services.Implementations
 {
@@ -13,16 +18,22 @@ namespace ITPLibrary.Api.Core.Services.Implementations
         private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
         private readonly IOrderItemRepository _orderItemRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly PaymentConfiguration _stripeConfig;
 
         public OrderService(IShoppingCartRepository shoppingCartRepository,
                 IOrderRepository orderRepository,
                     IOrderItemRepository orderItemRepository,
-                        IMapper mapper)
+                        IUserRepository userRepository,
+                            PaymentConfiguration stripeConfig,
+                                IMapper mapper)
         {
             _shoppingCartRepository = shoppingCartRepository;
             _orderRepository = orderRepository;
             _mapper = mapper;
             _orderItemRepository = orderItemRepository;
+            _stripeConfig = stripeConfig;
+            _userRepository = userRepository;
         }
 
         public async Task<bool> UpdateOrder(UpdateOrderDto updatedOrder)
@@ -89,6 +100,94 @@ namespace ITPLibrary.Api.Core.Services.Implementations
 
             List<OrderDisplayDto> mappedOrders = _mapper.Map<List<OrderDisplayDto>>(orders);
             return mappedOrders;
+        }
+
+        public async Task<Charge> ProcessPayment(CreditCardDto creditCard, int userId)
+        {
+            var shoppingCart = await _shoppingCartRepository.GetUserShoppingCart(userId);
+            if (shoppingCart == null)
+            {
+                return null;
+            }
+
+            StripeConfiguration.ApiKey = _stripeConfig.SecretKey;
+            TokenCardOptions cardOptions = CreateCardOptions(creditCard);
+            Token newToken = GetStripeToken(cardOptions);
+            Customer customer = await CreateCustomer(creditCard.Email, newToken);
+            Charge charge = await CreateChargeObject(customer, shoppingCart, userId);
+
+            return charge;
+        }
+
+        private async Task<Charge> CreateChargeObject(Customer customer, IEnumerable<ShoppingCart> shoppingCart, int userId)
+        {
+            var options = new ChargeCreateOptions
+            {
+                Amount = CalculateOrderPrice(shoppingCart) * 100,
+                Currency = OrderMessages.RON,
+                Description = OrderMessages.CheckoutMessage,
+                Source = customer.DefaultSourceId,
+                ReceiptEmail = customer.Email,
+                Metadata = await AddPaymentMetadata(shoppingCart, userId),
+                Customer = customer.Id
+            };
+
+            var service = new ChargeService();
+            Charge charge = service.Create(options);
+            return charge;
+        }
+
+        private TokenCardOptions CreateCardOptions(CreditCardDto creditCard)
+        {
+            TokenCardOptions card = new TokenCardOptions();
+            card.Name = $"{creditCard.FirstName} {creditCard.LastName}";
+            card.Number = creditCard.CardNumber;
+            card.ExpYear = creditCard.ExpirationYear.ToString();
+            card.ExpMonth = creditCard.ExpirationMonth.ToString();
+            card.Cvc = creditCard.CVV2.ToString();
+
+            return card;
+        }
+
+        private Token GetStripeToken(TokenCardOptions card)
+        {
+            TokenCreateOptions token = new TokenCreateOptions();
+            token.Card = card;
+            TokenService serviceToken = new TokenService();
+            Token newToken = serviceToken.Create(token);
+
+            return newToken;
+        }
+
+        private async Task<Customer> CreateCustomer(string customerEmail, Token token)
+        {
+            CustomerCreateOptions customer = new CustomerCreateOptions()
+            {
+                Email = customerEmail,
+                Source = token.Id,
+                Name = token.Card.Name
+            };
+
+            var customerService = new CustomerService();
+            Customer stripeCustomer = customerService.Create(customer);
+
+            return stripeCustomer;
+        }
+
+        private async Task<Dictionary<string, string>> AddPaymentMetadata(IEnumerable<ShoppingCart> shoppingCart, int userId)
+        {
+            Dictionary<string, string> metadata = new Dictionary<string, string>();
+            int productIndex = 1;
+            foreach (var item in shoppingCart)
+            {
+                metadata.Add($"{CommonConstants.Product} {productIndex}", item.Book.Title);
+                var bookQuanity = await _shoppingCartRepository.GetBookQuantity(userId, item.Book.Id);
+                metadata.Add($"{CommonConstants.Quantity} of product {productIndex}", bookQuanity.ToString());
+
+                productIndex++;
+            }
+
+            return metadata;
         }
 
         private static int CalculateOrderPrice(IEnumerable<ShoppingCart> productList)

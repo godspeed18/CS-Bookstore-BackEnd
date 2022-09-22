@@ -55,5 +55,13 @@ namespace ITPLibrary.Api.Controllers
 
             return Ok(OrderMessages.Success);
         }
+
+        [HttpPost(OrderControllerRoutes.Checkout)]
+        public async Task<ActionResult> Checkout(CreditCardDto userCreditCard)
+        {
+            var charge = await _orderService.ProcessPayment(userCreditCard, CommonMethods.GetUserIdFromContext(HttpContext));
+
+            return Ok(charge.Status);
+        }
     }
 }
