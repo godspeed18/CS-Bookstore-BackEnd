@@ -35,7 +35,6 @@ namespace ITPLibrary.Api.Data.Repositories.Implementations
             return await _db.Users.FirstOrDefaultAsync((u => u.Email == email));
         }
 
-        //to be changed when i switch back to the user management branch
         public async Task<bool> IsEmailAlreadyRegistered(string email)
         {
             var response = await _db.Users.Where(u => u.Email == email).FirstOrDefaultAsync();

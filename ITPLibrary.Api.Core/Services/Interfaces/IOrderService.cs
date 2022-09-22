@@ -1,5 +1,5 @@
 ﻿using ITPLibrary.Api.Core.Dtos;
-using ITPLibrary.Api.Data.Entities;
+using Stripe;
 
 namespace ITPLibrary.Api.Core.Services.Interfaces
 {
@@ -8,5 +8,7 @@ namespace ITPLibrary.Api.Core.Services.Interfaces
         public Task<bool> PostOrder(OrderPostDto newOrder, int userId);
         public Task<IEnumerable<OrderDisplayDto>> GetAllOrders(int userId);
         public Task<bool> UpdateOrder(UpdateOrderDto updatedOrder);
+        public Task<Charge> ProcessPayment(CreditCardDto creditCard, int userId);
     }
 }
+
