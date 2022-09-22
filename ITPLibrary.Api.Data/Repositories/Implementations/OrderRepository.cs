@@ -34,9 +34,11 @@ namespace ITPLibrary.Api.Data.Repositories.Implementations
 
         public async Task<Order> GetOrder(int orderId)
         {
-            return await _db.Orders.Where(u => u.Id == orderId)
+            var query = _db.Orders.Where(u => u.Id == orderId)
                 .Include(u => u.BillingAddress)
-                .Include(u => u.DeliveryAddress)
+                .Include(u => u.DeliveryAddress);
+
+            return await query
                 .FirstOrDefaultAsync();
         }
 

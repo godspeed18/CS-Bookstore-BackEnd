@@ -45,7 +45,7 @@ namespace ITPLibrary.Api.Controllers
         }
 
         [HttpPut(OrderControllerRoutes.UpdateOrder)]
-        public async Task<ActionResult> UpdateOrder(UpdateOrderDto updatedOrder)
+        public async Task<ActionResult> UpdateOrder([FromBody] UpdateOrderDto updatedOrder)
         {
             var updateResponse = await _orderService.UpdateOrder(updatedOrder);
             if(updateResponse == false)

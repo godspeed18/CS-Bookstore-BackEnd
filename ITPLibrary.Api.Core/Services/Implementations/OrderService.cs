@@ -182,7 +182,7 @@ namespace ITPLibrary.Api.Core.Services.Implementations
             return unchangedOrder;
         }
 
-        private async Task UpdateBillingAddress(Order order, UpdateAddressDto newAddress)
+        private async Task UpdateBillingAddress(Order order, AddressDto newAddress)
         {
             order.BillingAddress.AddressLine = newAddress.AddressLine;
             order.BillingAddress.PhoneNumber = newAddress.PhoneNumber;
@@ -191,7 +191,7 @@ namespace ITPLibrary.Api.Core.Services.Implementations
             await _orderRepository.UpdateAddress(order.BillingAddress);
         }
 
-        private async Task UpdateDeliveryAddress(Order order, UpdateAddressDto newAddress)
+        private async Task UpdateDeliveryAddress(Order order, AddressDto newAddress)
         {
             order.DeliveryAddress.AddressLine = newAddress.AddressLine;
             order.DeliveryAddress.PhoneNumber = newAddress.PhoneNumber;

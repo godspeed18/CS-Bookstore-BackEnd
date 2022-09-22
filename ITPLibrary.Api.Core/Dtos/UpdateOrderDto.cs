@@ -12,9 +12,9 @@ namespace ITPLibrary.Api.Core.Dtos
         [Required]
         public int Id { get; set; }
 
-        public UpdateAddressDto BillingAddress { get; set; }
+        public AddressDto BillingAddress { get; set; }
 
-        public UpdateAddressDto DeliveryAddress { get; set; }
+        public AddressDto DeliveryAddress { get; set; }
 
         [MaxLength(OrderValidationRules.ObservationsMaxLength)]
         public string Observations { get; set; }

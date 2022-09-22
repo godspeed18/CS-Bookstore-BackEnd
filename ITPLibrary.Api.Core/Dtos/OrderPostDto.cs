@@ -9,10 +9,10 @@ namespace ITPLibrary.Api.Core.Dtos
     public class OrderPostDto
     {
         [Required]
-        public Address BillingAddress { get; set; }
+        public AddressDto BillingAddress { get; set; }
 
         [Required]
-        public Address DeliveryAddress { get; set; }
+        public AddressDto DeliveryAddress { get; set; }
 
         [Required]
         public PaymentTypeEnum PaymentType { get; set; }
