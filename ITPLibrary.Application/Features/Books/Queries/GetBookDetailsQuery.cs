@@ -3,7 +3,7 @@ using MediatR;
 
 namespace ITPLibrary.Application.Features.Books.Queries
 {
-    public class GetBookDetailsQuery : IRequest<BookDetailsVm>
+    public class GetBookDetailsQuery : IRequest<BookWithDetailsVm>
     {
         public int Id { get; set; }
     }

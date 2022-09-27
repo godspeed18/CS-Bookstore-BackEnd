@@ -4,5 +4,6 @@ namespace ITPLibrary.Application.Contracts.Persistance
 {
     public interface IUserRepository : IAsyncRepository<User>
     {
+        public Task<User> GetUserByEmail(string email);
     }
 }

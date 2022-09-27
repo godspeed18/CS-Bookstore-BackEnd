@@ -6,7 +6,7 @@ using MediatR;
 
 namespace ITPLibrary.Application.Features.Books.Queries
 {
-    public class GetBookDetailsQueryHandler : IRequestHandler<GetBookDetailsQuery, BookDetailsVm>
+    public class GetBookDetailsQueryHandler : IRequestHandler<GetBookDetailsQuery, BookWithDetailsVm>
     {
         private readonly IAsyncRepository<Book> _bookRepository;
         private readonly IMapper _mapper;
@@ -17,10 +17,10 @@ namespace ITPLibrary.Application.Features.Books.Queries
             _mapper = mapper;
         }
 
-        public async Task<BookDetailsVm> Handle(GetBookDetailsQuery request, CancellationToken cancellationToken)
+        public async Task<BookWithDetailsVm> Handle(GetBookDetailsQuery request, CancellationToken cancellationToken)
         {
             var response = await _bookRepository.GetByIdAsync(request.Id);
-            var mappedBook = _mapper.Map<BookDetailsVm>(response);
+            var mappedBook = _mapper.Map<BookWithDetailsVm>(response);
 
             return mappedBook;
         }
