@@ -1,11 +1,10 @@
 ﻿using ITPLibrary.Application.Features.Users.ViewModels;
-using ITPLibrary.Domain.Entites;
 using MediatR;
 
 namespace ITPLibrary.Application.Features.Users.Commands
 {
-    public interface RegisterUserCommand : IRequest<User>
+    public class LoginUserCommand : IRequest<SucessfulUserLoginVm>
     {
-        public RegisterUserVm User { get; set; }
+        public LoginUserVm UserLoginInfo { get; set; }
     }
 }

@@ -6,6 +6,6 @@ namespace ITPLibrary.Application.Features.Books.ViewModels
     {
         public string Title { get; set; }
         public byte[] Thumbnail { get; set; }
-        public BookWithDetailsVm BookDetails { get; set; }
+        public BookDetailsVm BookDetails { get; set; }
     }
 }

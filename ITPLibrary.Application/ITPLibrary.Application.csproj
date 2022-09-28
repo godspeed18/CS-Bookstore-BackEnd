@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -16,9 +16,7 @@
     <Folder Include="Features\OrderItems\Commands\" />
     <Folder Include="Features\OrderItems\Queries\" />
     <Folder Include="Features\OrderItems\ViewModels\" />
-    <Folder Include="Features\Orders\Commands\" />
     <Folder Include="Features\Orders\Queries\" />
-    <Folder Include="Features\Orders\ViewModels\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +24,8 @@
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="MediatR" Version="10.0.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.9" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
   </ItemGroup>
 
 </Project>

@@ -15,7 +15,7 @@ namespace ITPLibrary.Application.Features.Books.Queries
         {
             var response = await _bookRepository.GetPopularAndRecentlyAddedBooks();
             var mappedList = _mapper.Map<IReadOnlyList<RecentlyAddedAndPopularBookVm>>(response);
-
+            
             return mappedList;
         }
     }
