@@ -46,6 +46,7 @@ namespace ITPLibrary.Application
                 };
             });
 
+            services.AddHttpContextAccessor();
 
             return services;
         }

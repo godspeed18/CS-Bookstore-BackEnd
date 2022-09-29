@@ -5,6 +5,6 @@ namespace ITPLibrary.Application.Features.BooksDetails.Queries
 {
     public class GetBookDetailsQuery:IRequest<BookDetailsVm>
     {
-        public int Id { get; set; }
+        public int BookId { get; set; }
     }
 }

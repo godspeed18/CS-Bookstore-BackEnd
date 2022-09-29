@@ -5,22 +5,18 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ITPLibrary.Application.Features.Orders.ViewModels
 {
-    public class OrderPostVm
+    public class UpdateOrderVm
     {
         [Required]
+        public int Id { get; set; }
+
         public AddressVm BillingAddress { get; set; }
 
-        [Required]
         public AddressVm DeliveryAddress { get; set; }
-
-        [Required]
-        public PaymentTypeEnum PaymentType { get; set; }
-
-        public DateTimeOffset DeliveryDate { get; set; }
 
         [MaxLength(OrderValidationRules.ObservationsMaxLength)]
         public string Observations { get; set; }
 
-        public bool RecommendUs { get; set; }
+        public PaymentTypeEnum PaymentType { get; set; }
     }
 }

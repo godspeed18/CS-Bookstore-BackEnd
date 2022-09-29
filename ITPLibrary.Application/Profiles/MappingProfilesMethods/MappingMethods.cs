@@ -1,4 +1,5 @@
 ﻿using ITPLibrary.Application.Validation.ValidationConstants;
+using ITPLibrary.Domain.Entites;
 
 namespace ITPLibrary.Application.Profiles.MappingProfilesMethods
 {
@@ -14,6 +15,17 @@ namespace ITPLibrary.Application.Profiles.MappingProfilesMethods
             {
                 return false;
             }
+        }
+
+        public static int CalculateNumberOfItems(IEnumerable<OrderItem> items)
+        {
+            int total = 0;
+            foreach (var item in items)
+            {
+                total += item.Quantity;
+            }
+
+            return total;
         }
     }
 }

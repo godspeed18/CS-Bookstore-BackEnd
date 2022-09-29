@@ -4,8 +4,8 @@ using MediatR;
 
 namespace ITPLibrary.Application.Features.Orders.Commands
 {
-    public class PostOrderCommand : IRequest<Order>
+    public class UpdateOrderCommand : IRequest<Order>
     {
-        public OrderPostVm NewOrder { get; set; }
+        public UpdateOrderVm UpdateOrderInfo { get; set; }
     }
 }

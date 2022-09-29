@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
+using Common;
+using ITPLibrary.Api.Data.Entities.Enums;
 using ITPLibrary.Application.Contracts.Persistance;
 using ITPLibrary.Application.Features.Orders.ViewModels;
 using ITPLibrary.Domain.Entites;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace ITPLibrary.Application.Features.Orders.Commands
 {
@@ -11,41 +14,52 @@ namespace ITPLibrary.Application.Features.Orders.Commands
         private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
         private readonly IShoppingCartRepository _shoppingCartRepository;
-
-        public PostOrderCommandHandler(IOrderRepository orderRepository)
+        private readonly IOrderItemRepository _orderItemRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+       
+        public PostOrderCommandHandler
+            (IOrderRepository orderRepository,
+                IOrderItemRepository orderItemRepository,
+                    IShoppingCartRepository shoppingCartRepository,
+                        IMapper mapper,
+                            IHttpContextAccessor httpContextAccessor)
         {
             _orderRepository = orderRepository;
+            _orderItemRepository = orderItemRepository;
+            _shoppingCartRepository = shoppingCartRepository;
+            _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public Task<Order> Handle(PostOrderCommand request, CancellationToken cancellationToken)
+        public async Task<Order> Handle(PostOrderCommand request, CancellationToken cancellationToken)
         {
+            int userId = CommonMethods.GetUserIdFromContext(_httpContextAccessor.HttpContext);
             
-        }
-
-        private async Task<bool> PostOrder(OrderPostVm newOrder, int userId)
-        {
-            if (newOrder == null)
+            if (request.NewOrder == null || userId==0)
             {
-                return false;
+                return null;
             }
 
             var productList = await _shoppingCartRepository.GetUserShoppingCart(userId);
             if (productList == null)
             {
-                return false;
+                return null;
             }
 
             int totalPrice = CalculateOrderPrice(productList);
-            var mappedOrder = MapOrder(newOrder, userId, totalPrice);
-            await _orderRepository.PostOrder(mappedOrder);
+            var mappedOrder = MapOrder(request.NewOrder, userId, totalPrice);
+            await _orderRepository.AddAsync(mappedOrder);
+
             if (mappedOrder.Id == 0)
             {
-                return false;
+                return null;
             }
 
             await PostOrderItems(productList, mappedOrder.Id);
             await _shoppingCartRepository.EmptyCart(userId);
-            return true;
+            await _shoppingCartRepository.SaveChangesAsync();
+
+            return mappedOrder;
         }
 
         private Order MapOrder(OrderPostVm order, int userId, int totalPrice)
@@ -56,6 +70,32 @@ namespace ITPLibrary.Application.Features.Orders.Commands
             mappedNewOrder.TotalPrice = totalPrice;
 
             return mappedNewOrder;
+        }
+
+        private static int CalculateOrderPrice(IEnumerable<ShoppingCart> productList)
+        {
+            int totalPrice = 0;
+            foreach (var product in productList)
+            {
+                totalPrice += product.Quantity * product.Book.Price;
+            }
+
+            return totalPrice;
+        }
+
+        private async Task PostOrderItems(IEnumerable<ShoppingCart> itemList, int orderId)
+        {
+            foreach (var shoppingCartItem in itemList)
+            {
+                await _orderItemRepository.AddAsync(MapShoppingCartToOrderItem(shoppingCartItem, orderId));
+            }
+        }
+
+        private OrderItem MapShoppingCartToOrderItem(ShoppingCart item, int orderId)
+        {
+            var orderItem = _mapper.Map<OrderItem>(item);
+            orderItem.OrderId = orderId;
+            return orderItem;
         }
     }
 }

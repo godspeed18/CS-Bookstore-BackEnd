@@ -2,6 +2,7 @@
 using ITPLibrary.Application.Features.Addresses.ViewModels;
 using ITPLibrary.Application.Features.Books.ViewModels;
 using ITPLibrary.Application.Features.BooksDetails.ViewModels;
+using ITPLibrary.Application.Features.Orders.ViewModels;
 using ITPLibrary.Application.Features.ShoppingCarts.ViewModels;
 using ITPLibrary.Application.Features.Users.ViewModels;
 using ITPLibrary.Application.Profiles.MappingProfilesMethods;
@@ -22,7 +23,7 @@ namespace ITPLibrary.Application.Profiles
                 ForMember(dest => dest.RecentlyAdded,
                             opt => opt.MapFrom
                             (src => MappingMethods.IsBookRecentlyAdded(src.AddedDateTime)));
-            
+
             CreateMap<BookPostVm, Book>();
 
             CreateMap<Book, PopularBookVm>();
@@ -35,7 +36,31 @@ namespace ITPLibrary.Application.Profiles
             #endregion
 
             #region Order
+            CreateMap<OrderPostVm, Order>()
+                .ForMember(dest => dest.PaymentTypeId,
+                            opt => opt.MapFrom
+                                (src => (int)src.PaymentType));
+            
+            CreateMap<ShoppingCart, OrderItem>()
+                .ForMember(dest => dest.Quantity,
+                            opt => opt.MapFrom
+                                (src => src.Quantity))
+                .ForMember(dest => dest.Price,
+                            opt => opt.MapFrom
+                                (src => src.Book.Price))
+                .ForMember(dest => dest.BookId,
+                            opt => opt.MapFrom
+                                (src => src.BookId))
+                .ForMember(dest => dest.Id,
+                            opt => opt.Ignore());
 
+            CreateMap<Order, OrderDisplayVm>()
+                .ForMember(dest => dest.Status,
+                            opt => opt.MapFrom
+                                (src => src.OrderStatusId))
+                .ForMember(dest => dest.NumberOfItems,
+                            opt => opt.MapFrom
+                                (src => MappingMethods.CalculateNumberOfItems(src.Items)));
             #endregion
 
             #region OrderItem
@@ -61,6 +86,7 @@ namespace ITPLibrary.Application.Profiles
 
             #region User
             CreateMap<RegisterUserVm, User>();
+            CreateMap<User, SucessfulUserLoginVm>();
             #endregion
         }
     }

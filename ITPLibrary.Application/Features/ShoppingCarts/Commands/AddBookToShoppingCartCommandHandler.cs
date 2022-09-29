@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Common;
 using ITPLibrary.Application.Contracts.Persistance;
 using ITPLibrary.Domain.Entites;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace ITPLibrary.Application.Features.ShoppingCarts.Commands
 {
@@ -9,20 +11,32 @@ namespace ITPLibrary.Application.Features.ShoppingCarts.Commands
     {
         private readonly IShoppingCartRepository _shoppingCartRepository;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AddBookToShoppingCartCommandHandler(IShoppingCartRepository shoppingCartRepository, IMapper mapper)
+        public AddBookToShoppingCartCommandHandler
+            (
+             IShoppingCartRepository shoppingCartRepository,
+                IMapper mapper,
+                    IHttpContextAccessor httpContextAccessor
+            )
         {
             _shoppingCartRepository = shoppingCartRepository;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ShoppingCart> Handle(AddBookToShoppingCartCommand request, CancellationToken cancellationToken)
         {
-            var shoppingCart = await _shoppingCartRepository.GetAsync(request.ShoppingCartItem.UserId, request.ShoppingCartItem.BookId);
+            int userId = CommonMethods.GetUserIdFromContext(_httpContextAccessor.HttpContext);
+
+            var shoppingCart = await _shoppingCartRepository.GetAsync(userId, request.BookId);
+            
             if (shoppingCart == null)
             {
-                ShoppingCart shoppingCartItem = _mapper.Map<ShoppingCart>(request.ShoppingCartItem);
-                shoppingCartItem.Quantity = 0;
+                ShoppingCart shoppingCartItem = new ShoppingCart();
+                shoppingCartItem.BookId = request.BookId;
+                shoppingCartItem.Quantity = 1;
+                shoppingCartItem.UserId = userId;
 
                 return await _shoppingCartRepository.AddAsync(shoppingCartItem);
             }

@@ -12,18 +12,16 @@ namespace ITPLibrary.Application.Features.Books.Queries
         private readonly IMapper _mapper;
         private readonly IBookRepository _bookRepository;
 
-        public GetPopularBooksQueryHandler(IMapper mapper, IBookRepository bookRepository)
+        public GetPopularBooksQueryHandler(IBookRepository bookRepository)
         {
-            _mapper = mapper;
+            _mapper = CreateCustomMapper();
             _bookRepository = bookRepository;
         }
 
         public async Task<IReadOnlyList<PopularBookVm>> Handle(GetPopularBooksQuery request, CancellationToken cancellationToken)
         {
-            var mapper = CreateCustomMapper();
-
             var response = await _bookRepository.GetPopularBooks();
-            var result = mapper.Map<IReadOnlyList<PopularBookVm>>(response);
+            var result = _mapper.Map<IReadOnlyList<PopularBookVm>>(response);
 
             return result;
         }
@@ -32,8 +30,8 @@ namespace ITPLibrary.Application.Features.Books.Queries
         {
             var mappingConfig = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<BookDetails, BookDetailsVm>();
                 cfg.CreateMap<Book, PopularBookVm>();
+                cfg.CreateMap<BookDetails, BookDetailsVm>();
             }
             );
             mappingConfig.AssertConfigurationIsValid();

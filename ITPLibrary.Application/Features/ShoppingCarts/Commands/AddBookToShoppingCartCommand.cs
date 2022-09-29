@@ -6,6 +6,6 @@ namespace ITPLibrary.Application.Features.ShoppingCarts.Commands
 {
     public class AddBookToShoppingCartCommand : IRequest<ShoppingCart>
     {
-        public ShoppingCartItemVm ShoppingCartItem { get; set; }
+        public int BookId { get; set; }
     }
 }

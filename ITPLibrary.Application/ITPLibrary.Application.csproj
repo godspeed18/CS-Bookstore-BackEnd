@@ -16,7 +16,7 @@
     <Folder Include="Features\OrderItems\Commands\" />
     <Folder Include="Features\OrderItems\Queries\" />
     <Folder Include="Features\OrderItems\ViewModels\" />
-    <Folder Include="Features\Orders\Queries\" />
+    <Folder Include="Features\RecoveryCodes\Queries\" />
   </ItemGroup>
 
   <ItemGroup>
