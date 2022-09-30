@@ -35,7 +35,6 @@ namespace ITPLibrary.Application.Features.Users.Commands
             mappedUser.HashedPassword = hashResultSha256.Digest;
             var newUser = await _userRepository.AddAsync(mappedUser);
 
-            await _userRepository.SaveChangesAsync();
             return newUser;
         }
     }

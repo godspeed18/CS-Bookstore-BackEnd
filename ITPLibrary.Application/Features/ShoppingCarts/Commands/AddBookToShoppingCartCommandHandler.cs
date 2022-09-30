@@ -44,7 +44,6 @@ namespace ITPLibrary.Application.Features.ShoppingCarts.Commands
             shoppingCart.Quantity++;
 
             var updatedCart = await _shoppingCartRepository.UpdateAsync(shoppingCart);
-            await _shoppingCartRepository.SaveChangesAsync();
 
             return updatedCart;
         }

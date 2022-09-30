@@ -1,7 +1,6 @@
-﻿using ITPLibrary.Domain.Entites;
-
-namespace ITPLibrary.Domain.Entites
-{    public class OrderItem
+﻿namespace ITPLibrary.Domain.Entites
+{
+    public class OrderItem
     {
         public int Id { get; set; }
 

@@ -27,5 +27,8 @@
         public int TotalPrice { get; set; }
 
         public List<OrderItem> Items { get; set; }
+
+        public PaymentType PaymentType { get; set; }
+        public OrderStatus OrderStatus { get; set; }
     }
 }

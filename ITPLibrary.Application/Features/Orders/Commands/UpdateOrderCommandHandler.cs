@@ -43,7 +43,6 @@ namespace ITPLibrary.Application.Features.Orders.Commands
             }
 
             var updatedOrder = await _orderRepository.UpdateAsync(unchangedOrder);
-            await _orderRepository.SaveChangesAsync();
             return updatedOrder;
 
         }

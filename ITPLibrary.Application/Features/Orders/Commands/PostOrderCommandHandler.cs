@@ -57,7 +57,6 @@ namespace ITPLibrary.Application.Features.Orders.Commands
 
             await PostOrderItems(productList, mappedOrder.Id);
             await _shoppingCartRepository.EmptyCart(userId);
-            await _shoppingCartRepository.SaveChangesAsync();
 
             return mappedOrder;
         }

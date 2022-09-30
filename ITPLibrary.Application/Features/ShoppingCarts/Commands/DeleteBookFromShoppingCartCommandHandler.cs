@@ -15,7 +15,7 @@ namespace ITPLibrary.Application.Features.ShoppingCarts.Commands
 
         public DeleteBookFromShoppingCartCommandHandler
             (
-            IMapper mapper, 
+            IMapper mapper,
                 IShoppingCartRepository shoppingCartRepository,
                     IHttpContextAccessor httpContextAccessor
             )
@@ -36,12 +36,11 @@ namespace ITPLibrary.Application.Features.ShoppingCarts.Commands
                 return null;
             }
 
-            ShoppingCart updatedCart = new ShoppingCart();
-            
+            ShoppingCart updatedCart = shoppingCart;
+
             if (shoppingCart.Quantity == 1)
             {
-                updatedCart = await _shoppingCartRepository.DeleteAsync(shoppingCart.Id);
-                await _shoppingCartRepository.SaveChangesAsync();
+                await _shoppingCartRepository.DeleteAsync(shoppingCart);
             }
 
             if (shoppingCart.Quantity > 1)
@@ -49,7 +48,7 @@ namespace ITPLibrary.Application.Features.ShoppingCarts.Commands
                 shoppingCart.Quantity--;
                 updatedCart = await _shoppingCartRepository.UpdateAsync(shoppingCart);
             }
-            
+
             return updatedCart;
         }
     }

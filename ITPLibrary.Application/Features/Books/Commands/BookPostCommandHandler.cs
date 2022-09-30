@@ -24,7 +24,6 @@ namespace ITPLibrary.Application.Features.Books.Commands
 
             var book = _mapper.Map<Book>(request.Book);
             var response = await _bookRepository.AddAsync(book);
-            await _bookRepository.SaveChangesAsync();
             
             return response;
         }

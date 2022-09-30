@@ -28,7 +28,6 @@ namespace ITPLibrary.Application.Features.Addresses.Commands
             addressToBeUpdated.Country = request.UpdatedAddress.Country;
 
             var response = await _addressRepository.UpdateAsync(addressToBeUpdated);
-            await _addressRepository.SaveChangesAsync();
             return response;
         }
     }

@@ -16,6 +16,9 @@ namespace ITPLibrary.Domain.Entites
         
         public bool Popular { get; set; }
 
-        public BookDetails BookDetails { get; set; } 
+        public BookDetails BookDetails { get; set; }
+        public List<OrderItem> OrderItems { get; set; }
+        public List<ShoppingCart> ShoppingCartItems { get; set; }
+
     }
 }

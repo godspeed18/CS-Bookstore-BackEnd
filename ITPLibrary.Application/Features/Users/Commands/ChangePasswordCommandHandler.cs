@@ -46,7 +46,6 @@ namespace ITPLibrary.Application.Features.Users.Commands
             user.Salt = hashResultSha256.Salt;
 
             var updatedUser = await _userRepository.UpdateAsync(user);
-            await _userRepository.SaveChangesAsync();
 
             return updatedUser;
         }
