@@ -7,5 +7,6 @@ namespace ITPLibrary.Application.Features.ShoppingCarts.Commands
     public class DeleteBookFromShoppingCartCommand : IRequest<ShoppingCart>
     {
         public int BookId { get; set; }
+        public int UserId { get; set; }
     }
 }

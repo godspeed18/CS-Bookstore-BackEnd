@@ -26,14 +26,14 @@ namespace ITPLibrary.Infrastructure.Persistance.Configurations
                 .IsRequired()
                 .HasMaxLength(UserValidationRules.NameMaxLength);
 
-            builder.HasMany(x => x.Orders)
+           /* builder.HasMany(x => x.Orders)
                 .WithOne(o => o.User);
 
             builder.HasMany(x => x.ShoppingCartItems)
                 .WithOne(s => s.User);
 
             builder.HasMany(x => x.RecoveryCodes)
-                .WithOne(r => r.User);
+                .WithOne(r => r.User);*/
         }
     }
 }

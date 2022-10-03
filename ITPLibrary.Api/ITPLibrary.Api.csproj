@@ -11,8 +11,6 @@
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.9" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.8" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -24,7 +22,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ITPLibrary.Api.Core\ITPLibrary.Api.Core.csproj" />
+    <ProjectReference Include="..\ClassLibrary1\ITPLibrary.Infrastructure.Persistance.csproj" />
+    <ProjectReference Include="..\ITPLibrary.Application\ITPLibrary.Application.csproj" />
+    <ProjectReference Include="..\ITPLibrary.Domain\ITPLibrary.Domain.csproj" />
+    <ProjectReference Include="..\ITPLibrary.Infrastructure.Infrastructure\ITPLibrary.Infrastructure.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -21,6 +21,11 @@ namespace ITPLibrary.Application.Features.Books.Queries
         public async Task<BookWithDetailsVm> Handle(GetBookDetailsQuery request, CancellationToken cancellationToken)
         {
             var response = await _bookRepository.GetByIdAsync(request.Id);
+            if (response==null)
+            {
+                return null;
+            }
+
             var mappedBook = _mapper.Map<BookWithDetailsVm>(response);
             mappedBook.BookDetails = _mapper.Map<BookDetailsVm>(response.BookDetails);
 

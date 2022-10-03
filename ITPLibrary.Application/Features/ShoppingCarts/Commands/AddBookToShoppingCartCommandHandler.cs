@@ -11,32 +11,36 @@ namespace ITPLibrary.Application.Features.ShoppingCarts.Commands
     {
         private readonly IShoppingCartRepository _shoppingCartRepository;
         private readonly IMapper _mapper;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IBookRepository _bookRepository;
 
         public AddBookToShoppingCartCommandHandler
             (
              IShoppingCartRepository shoppingCartRepository,
-                IMapper mapper,
-                    IHttpContextAccessor httpContextAccessor
+                IBookRepository bookRepository,
+                    IMapper mapper
             )
         {
             _shoppingCartRepository = shoppingCartRepository;
             _mapper = mapper;
-            _httpContextAccessor = httpContextAccessor;
+            _bookRepository = bookRepository;
         }
 
         public async Task<ShoppingCart> Handle(AddBookToShoppingCartCommand request, CancellationToken cancellationToken)
         {
-            int userId = CommonMethods.GetUserIdFromContext(_httpContextAccessor.HttpContext);
+            var shoppingCart = await _shoppingCartRepository.GetAsync(request.UserId, request.BookId);
+            var book = await _bookRepository.GetByIdAsync(request.BookId);
 
-            var shoppingCart = await _shoppingCartRepository.GetAsync(userId, request.BookId);
-            
+            if(book==null)
+            {
+                return null;
+            }
+
             if (shoppingCart == null)
             {
                 ShoppingCart shoppingCartItem = new ShoppingCart();
                 shoppingCartItem.BookId = request.BookId;
                 shoppingCartItem.Quantity = 1;
-                shoppingCartItem.UserId = userId;
+                shoppingCartItem.UserId = request.UserId;
 
                 return await _shoppingCartRepository.AddAsync(shoppingCartItem);
             }

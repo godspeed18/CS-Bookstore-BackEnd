@@ -1,17 +1,13 @@
 ﻿using ITPLibrary.Api.Data.Entities.Enums;
 using ITPLibrary.Domain.Entites;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace ITPLibrary.Infrastructure.Persistance
 {
     public class ITPLibraryDbContext : DbContext
     {
-        private readonly IHttpContextAccessor _httpContextAccesor;
-
-        public ITPLibraryDbContext(DbContextOptions<ITPLibraryDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
+        public ITPLibraryDbContext(DbContextOptions<ITPLibraryDbContext> options) : base(options)
         {
-            _httpContextAccesor = httpContextAccessor;
         }
 
         public DbSet<Book> Books { get; set; }
@@ -23,11 +19,11 @@ namespace ITPLibrary.Infrastructure.Persistance
         public DbSet<Address> Addresses { get; set; }
         public DbSet<OrderStatus> OrderStatuses { get; set; }
         public DbSet<PaymentType> PaymentTypes { get; set; }
-        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<OrderItem> OrderItem { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ITPLibraryDbContext).Assembly);
+            /*modelBuilder.ApplyConfigurationsFromAssembly(typeof(ITPLibraryDbContext).Assembly);*/
 
             modelBuilder.Entity<OrderStatus>().HasData(
                     new OrderStatus

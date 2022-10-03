@@ -36,8 +36,8 @@ namespace ITPLibrary.Infrastructure.Persistance.Configurations
             builder.Property(o => o.User)
                 .IsRequired();
 
-            builder.HasOne(o => o.User)
-                 .WithMany(u => u.Orders)
+           /* builder.HasOne(o => o.User)
+                 .WithMany(u=>u.Orders)
                  .HasForeignKey(o => o.UserId);
 
             builder.HasOne(o => o.BillingAddress)
@@ -59,6 +59,7 @@ namespace ITPLibrary.Infrastructure.Persistance.Configurations
             builder.HasMany(o => o.Items)
                 .WithOne(i => i.Order)
                 .HasForeignKey(i => i.OrderId);
+           */
         }
     }
 }

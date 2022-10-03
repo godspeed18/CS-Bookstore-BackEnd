@@ -22,6 +22,11 @@ namespace ITPLibrary.Application.Features.Orders.Commands
         {
             Order unchangedOrder = await _orderRepository.GetOrder(request.UpdateOrderInfo.Id);
 
+            if (unchangedOrder.UserId != request.UserId)
+            {
+                return null;
+            }
+
             if (unchangedOrder == null)
             {
                 return null;

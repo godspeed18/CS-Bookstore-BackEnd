@@ -7,5 +7,6 @@ namespace ITPLibrary.Application.Features.Orders.Commands
     public class UpdateOrderCommand : IRequest<Order>
     {
         public UpdateOrderVm UpdateOrderInfo { get; set; }
+        public int UserId { get; set; }
     }
 }

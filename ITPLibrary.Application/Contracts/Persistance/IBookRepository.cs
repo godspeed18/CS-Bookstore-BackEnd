@@ -6,5 +6,6 @@ namespace ITPLibrary.Application.Contracts.Persistance
     {
         public Task<IEnumerable<Book>> GetPopularBooks();
         public Task<IEnumerable<Book>> GetPopularAndRecentlyAddedBooks();
+        public Task<IEnumerable<Book>> GetAllWithDetailsAsync();
     }
 }

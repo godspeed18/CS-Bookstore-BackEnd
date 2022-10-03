@@ -5,5 +5,6 @@ namespace ITPLibrary.Application.Features.Orders.Queries
 {
     public class DisplayAllOrdersQuery : IRequest<IEnumerable<OrderDisplayVm>>
     {
+        public int UserId { get; set; }
     }
 }

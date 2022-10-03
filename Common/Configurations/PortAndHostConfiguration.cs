@@ -1,4 +1,4 @@
-﻿namespace ITPLibrary.Api.Core.Configurations
+﻿namespace ITPLibrary.Common
 {
     public class PortAndHostConfiguration
     {

@@ -7,5 +7,6 @@ namespace ITPLibrary.Application.Features.Orders.Commands
     public class PostOrderCommand : IRequest<Order>
     {
         public OrderPostVm NewOrder { get; set; }
+        public int UserId { get; set; }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Common;
 using ITPLibrary.Api.Data.Entities.Enums;
 using ITPLibrary.Application.Contracts.Persistance;
 using ITPLibrary.Application.Features.Orders.ViewModels;
@@ -15,39 +14,35 @@ namespace ITPLibrary.Application.Features.Orders.Commands
         private readonly IMapper _mapper;
         private readonly IShoppingCartRepository _shoppingCartRepository;
         private readonly IOrderItemRepository _orderItemRepository;
-        private readonly IHttpContextAccessor _httpContextAccessor;
        
         public PostOrderCommandHandler
             (IOrderRepository orderRepository,
                 IOrderItemRepository orderItemRepository,
                     IShoppingCartRepository shoppingCartRepository,
-                        IMapper mapper,
-                            IHttpContextAccessor httpContextAccessor)
+                        IMapper mapper
+            )
         {
             _orderRepository = orderRepository;
             _orderItemRepository = orderItemRepository;
             _shoppingCartRepository = shoppingCartRepository;
             _mapper = mapper;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<Order> Handle(PostOrderCommand request, CancellationToken cancellationToken)
         {
-            int userId = CommonMethods.GetUserIdFromContext(_httpContextAccessor.HttpContext);
-            
-            if (request.NewOrder == null || userId==0)
+            if (request.NewOrder == null || request.UserId==0)
             {
                 return null;
             }
 
-            var productList = await _shoppingCartRepository.GetUserShoppingCart(userId);
+            var productList = await _shoppingCartRepository.GetUserShoppingCart(request.UserId);
             if (productList == null)
             {
                 return null;
             }
 
             int totalPrice = CalculateOrderPrice(productList);
-            var mappedOrder = MapOrder(request.NewOrder, userId, totalPrice);
+            var mappedOrder = MapOrder(request.NewOrder, request.UserId, totalPrice);
             await _orderRepository.AddAsync(mappedOrder);
 
             if (mappedOrder.Id == 0)
@@ -56,7 +51,7 @@ namespace ITPLibrary.Application.Features.Orders.Commands
             }
 
             await PostOrderItems(productList, mappedOrder.Id);
-            await _shoppingCartRepository.EmptyCart(userId);
+            await _shoppingCartRepository.EmptyCart(request.UserId);
 
             return mappedOrder;
         }

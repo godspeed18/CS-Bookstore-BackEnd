@@ -1,9 +1,9 @@
 ﻿using ITPLibrary.Api.Controllers.Method_Routes;
-using ITPLibrary.Api.Core.Dtos;
-using ITPLibrary.Api.Core.Services.Interfaces;
-using ITPLibrary.Api.Data.Entities;
 using ITPLibrary.Api.Data.Entities.ErrorMessages;
-using ITPLibrary.Api.Data.Entities.RequestStatuses;
+using ITPLibrary.Application.Features.RecoveryCodes.Commands;
+using ITPLibrary.Application.Features.Users.Commands;
+using ITPLibrary.Application.Features.Users.ViewModels;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,37 +12,29 @@ namespace ITPLibrary.Api.Controllers
 {
     public class UserController : ControllerBase
     {
-        private readonly IUserService _userService;
-        private readonly IUserLoginService _userLoginService;
-        private readonly IRecoveryCodeService _recoveryCodeService;
+        private readonly IMediator _mediator;
 
-        public UserController(IUserService userService,
-                                IUserLoginService userLoginService,
-                                    IConfiguration configuration,
-                                    IRecoveryCodeService recoveryCodeService)
+        public UserController(IMediator mediator)
         {
-            _userService = userService;
-            _userLoginService = userLoginService;
-            _recoveryCodeService = recoveryCodeService;
+            _mediator = mediator;
         }
 
         [HttpPost(UserControllerRoutes.RequestRecoverPassword)]
         [AllowAnonymous]
         public async Task<ActionResult> RequestPasswordRecovery(string email)
         {
-            var user = await GetUser(email);
-
-            if (user != null)
+            if (email == null)
             {
-                string recoveryCode = _userService.GenerateRandomRecoveryCode();
+                return NotFound();
+            }
 
-                var userServiceResponse = await _userService.SendRecoveryEmail(user.Email, recoveryCode);
-                var recoveryCodeServiceResponse = await _recoveryCodeService.PostRecoveryCode(recoveryCode, user.Email);
+            RequestPasswordRecoveryCommand passwordRecoveryCommand = new RequestPasswordRecoveryCommand();
+            passwordRecoveryCommand.UserEmail = email;
+            var response = await _mediator.Send(passwordRecoveryCommand);
 
-                if (userServiceResponse == false || recoveryCodeServiceResponse == false)
-                {
-                    return BadRequest(UserMessages.RecoveryEmailNotSent);
-                }
+            if (response == null)
+            {
+                return BadRequest(UserMessages.RecoveryEmailNotSent);
             }
 
             return Ok(UserMessages.RecoveryEmailSent);
@@ -50,31 +42,20 @@ namespace ITPLibrary.Api.Controllers
 
         [HttpPost(UserControllerRoutes.ChangePassword)]
         [AllowAnonymous]
-        public async Task<ActionResult> ChangePassword(ChangePasswordDto changePassword)
+        public async Task<ActionResult> ChangePassword(PasswordRecoveryVm changePassword)
         {
             if (ModelState.IsValid != true)
             {
                 return BadRequest();
             }
 
-            var user = await _userService.GetUser(changePassword.Email);
+            ChangePasswordCommand changePasswordCommand = new ChangePasswordCommand();
+            changePasswordCommand.PasswordReset = changePassword;
 
-            if (user != default)
+            var response = await _mediator.Send(changePasswordCommand);
+            if (response == null)
             {
-                if (await _recoveryCodeService.IsCodeValid(user.Id, changePassword.RecoveryCode))
-                {
-                    var response = await _userService.ChangePassword(user.Id, changePassword.Password);
-                    await _recoveryCodeService.SetRecoveryCodeNotValid(changePassword.RecoveryCode);
-
-                    if (response != true)
-                    {
-                        return BadRequest(UserMessages.UnknownError);
-                    }
-                }
-                else
-                {
-                    return BadRequest(UserMessages.RecoveryCodeNotValid);
-                }
+                return NotFound();
             }
 
             return Ok(UserMessages.Success);
@@ -82,9 +63,12 @@ namespace ITPLibrary.Api.Controllers
 
         [HttpPost(UserControllerRoutes.LoginUser)]
         [AllowAnonymous]
-        public async Task<ActionResult> Login(UserLoginDto loginUser)
+        public async Task<ActionResult> Login(LoginUserVm loginUser)
         {
-            var loginResponse = await _userLoginService.Login(loginUser);
+            LoginUserCommand loginUserCommand = new LoginUserCommand();
+            loginUserCommand.UserLoginInfo = loginUser;
+
+            var loginResponse = await _mediator.Send(loginUserCommand);
             if (loginResponse == null)
             {
                 return Unauthorized();
@@ -96,35 +80,18 @@ namespace ITPLibrary.Api.Controllers
 
         [HttpPost(UserControllerRoutes.RegisterUser)]
         [AllowAnonymous]
-        public async Task<ActionResult> RegisterUser(UserRegisterDto newUser)
+        public async Task<ActionResult> RegisterUser(RegisterUserVm newUser)
         {
-            if (ModelState.IsValid)
-            {
-                var dataValidationResponse = await _userService.ValidateUserData(newUser);
-
-                if (dataValidationResponse == UserRegisterStatus.Success)
-                {
-                    await _userService.RegisterUser(newUser);
-                    return Ok();
-                }
-                else if (dataValidationResponse == UserRegisterStatus.EmailAlreadyRegistered)
-                {
-                    return Conflict(UserMessages.EmailAlreadyRegistered);
-                }
-                else
-                {
-                    return BadRequest();
-                }
-            }
-            else
+            if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-        }
 
-        private async Task<User> GetUser(string email)
-        {
-            return await _userService.GetUser(email);
+            RegisterUserCommand registerUserCommand = new RegisterUserCommand();
+            registerUserCommand.User = newUser;
+
+            var response = await _mediator.Send(registerUserCommand);
+            return Ok(response);
         }
     }
 }

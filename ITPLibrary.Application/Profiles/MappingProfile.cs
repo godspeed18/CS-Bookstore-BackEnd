@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ITPLibrary.Api.Data.Entities.Enums;
 using ITPLibrary.Application.Features.Addresses.ViewModels;
 using ITPLibrary.Application.Features.Books.ViewModels;
 using ITPLibrary.Application.Features.BooksDetails.ViewModels;
@@ -39,7 +40,9 @@ namespace ITPLibrary.Application.Profiles
             CreateMap<OrderPostVm, Order>()
                 .ForMember(dest => dest.PaymentTypeId,
                             opt => opt.MapFrom
-                                (src => (int)src.PaymentType));
+                                (src => (int)src.PaymentType))
+                .ForMember(dest=>dest.PaymentType,
+                            opt=>opt.Ignore());
             
             CreateMap<ShoppingCart, OrderItem>()
                 .ForMember(dest => dest.Quantity,
@@ -72,7 +75,6 @@ namespace ITPLibrary.Application.Profiles
             #endregion
 
             #region PaymentType
-
             #endregion
 
             #region RecoveryCode

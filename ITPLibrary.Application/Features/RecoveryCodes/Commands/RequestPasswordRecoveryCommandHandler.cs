@@ -1,4 +1,5 @@
-﻿using ITPLibrary.Application.Contracts.Persistance;
+﻿using ITPLibrary.Application.Contracts.Infrastructure;
+using ITPLibrary.Application.Contracts.Persistance;
 using ITPLibrary.Domain.Entites;
 using ITPLibrary.PasswordHasher;
 using MediatR;
@@ -9,11 +10,18 @@ namespace ITPLibrary.Application.Features.RecoveryCodes.Commands
     {
         private readonly IRecoveryCodeRepository _recoveryCodeRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IEmailService _emailService;
 
-        public RequestPasswordRecoveryCommandHandler(IRecoveryCodeRepository recoveryCodeRepository, IUserRepository userRepository)
+        public RequestPasswordRecoveryCommandHandler
+            (
+                IRecoveryCodeRepository recoveryCodeRepository,
+                 IUserRepository userRepository,
+                     IEmailService emailService
+            )
         {
             _recoveryCodeRepository = recoveryCodeRepository;
             _userRepository = userRepository;
+            _emailService = emailService;
         }
 
         public async Task<string> Handle(RequestPasswordRecoveryCommand request, CancellationToken cancellationToken)
@@ -34,6 +42,9 @@ namespace ITPLibrary.Application.Features.RecoveryCodes.Commands
 
             var recoveryCode = InitialiseRecoveryCode(code: GenerateRandomRecoveryCode(), userId: user.Id);
             await _recoveryCodeRepository.AddAsync(recoveryCode);
+
+            _emailService.SendRecoveryEmail(email: request.UserEmail, emailBody: recoveryCode.Code);
+
             return request.UserEmail;
         }
 

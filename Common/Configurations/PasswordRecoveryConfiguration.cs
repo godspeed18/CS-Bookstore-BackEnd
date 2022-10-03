@@ -1,4 +1,4 @@
-﻿namespace ITPLibrary.Api.Data.Configurations
+﻿namespace ITPLibrary.Common
 {
     public class PasswordRecoveryConfiguration
     {

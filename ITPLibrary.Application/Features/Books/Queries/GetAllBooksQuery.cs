@@ -3,8 +3,7 @@ using MediatR;
 
 namespace ITPLibrary.Application.Features.Books.Queries
 {
-    public class GetPopularAndRecentlyAddedBooksQuery : IRequest<IEnumerable<RecentlyAddedAndPopularBookVm>>
+    public class GetAllBooksQuery : IRequest<IEnumerable<BookWithDetailsVm>>
     {
-
     }
 }

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace ITPLibrary.Application.Features.Users.Commands
 {
-    public interface RegisterUserCommand : IRequest<User>
+    public class RegisterUserCommand : IRequest<User>
     {
         public RegisterUserVm User { get; set; }
     }

@@ -26,13 +26,13 @@ namespace ITPLibrary.Infrastructure.Persistance.Configurations
                 .IsRequired()
                 .HasMaxLength(AddressValidationRules.PhoneNumberMinLength);
 
-            builder.HasMany(a => a.Orders)
-                .WithOne(o => o.BillingAddress)
-                .HasForeignKey(o => o.BillingAddressId);
+           /* builder.HasMany(a => a.Orders)
+           .WithOne(o => o.BillingAddress)
+           .HasForeignKey(o => o.BillingAddressId);
 
             builder.HasMany(a => a.Orders)
                 .WithOne(o => o.DeliveryAddress)
-                .HasForeignKey(o => o.DeliveryAddressId);
+                .HasForeignKey(o => o.DeliveryAddressId);*/
         }
     }
 }

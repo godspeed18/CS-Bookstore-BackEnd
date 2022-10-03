@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Constants;
-using ITPLibrary.Api.Data.Configurations;
 using ITPLibrary.Application.Contracts.Persistance;
 using ITPLibrary.Application.Features.Users.ViewModels;
+using ITPLibrary.Common;
 using ITPLibrary.Domain.Entites;
 using ITPLibrary.PasswordHasher;
 using MediatR;
@@ -38,7 +38,7 @@ namespace ITPLibrary.Application.Features.Users.Commands
             var userToBeLogged = await _userRepository.GetUserByEmail(user.Email);
 
             if (userToBeLogged != null
-                && await IsPasswordCorrect(user.Password, userToBeLogged.Salt, user.Email))
+                && await IsPasswordCorrect(salt: userToBeLogged.Salt, password: user.Password, email: user.Email))
             {
                 Claim[] claims = GetClaims(userToBeLogged);
                 var key = new SymmetricSecurityKey(Convert.FromBase64String(_jwtConfiguration.Key));

@@ -1,8 +1,10 @@
 ﻿using Common;
 using ITPLibrary.Api.Controllers.MethodRoutes;
-using ITPLibrary.Api.Core.Dtos;
-using ITPLibrary.Api.Core.Services.Interfaces;
 using ITPLibrary.Api.Data.Entities.RequestMessages;
+using ITPLibrary.Application.Features.Orders.Commands;
+using ITPLibrary.Application.Features.Orders.Queries;
+using ITPLibrary.Application.Features.Orders.ViewModels;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,18 +13,24 @@ namespace ITPLibrary.Api.Controllers
     [Authorize]
     public class OrderController : ControllerBase
     {
-        private readonly IOrderService _orderService;
+        private readonly IMediator _mediator;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public OrderController(IOrderService orderService)
+        public OrderController(IMediator mediator, IHttpContextAccessor httpContextAccessor)
         {
-            _orderService = orderService;
+            _mediator = mediator;
+            _httpContextAccessor = httpContextAccessor; 
         }
 
         [HttpPost(OrderControllerRoutes.PostOrder)]
-        public async Task<ActionResult> PostOrder(OrderPostDto newOrder)
+        public async Task<ActionResult> PostOrder(OrderPostVm newOrder)
         {
+            PostOrderCommand postOrderCommand = new PostOrderCommand();
+            postOrderCommand.NewOrder = newOrder;
+            postOrderCommand.UserId = CommonMethods.GetUserIdFromContext(_httpContextAccessor.HttpContext);
+
             int userId = CommonMethods.GetUserIdFromContext(HttpContext);
-            if (await _orderService.PostOrder(newOrder, userId) == false)
+            if (await _mediator.Send(postOrderCommand) == null)
             {
                 return BadRequest(OrderMessages.OrderNotPlaced);
             }
@@ -34,7 +42,10 @@ namespace ITPLibrary.Api.Controllers
         public async Task<ActionResult> GetAllOrders()
         {
             int userId = CommonMethods.GetUserIdFromContext(HttpContext);
-            var orders = await _orderService.GetAllOrders(userId);
+            DisplayAllOrdersQuery displayAllOrdersQuery = new DisplayAllOrdersQuery();
+            displayAllOrdersQuery.UserId=userId;
+
+            var orders = await _mediator.Send(displayAllOrdersQuery);
 
             if (orders == null)
             {
@@ -45,10 +56,17 @@ namespace ITPLibrary.Api.Controllers
         }
 
         [HttpPut(OrderControllerRoutes.UpdateOrder)]
-        public async Task<ActionResult> UpdateOrder([FromBody] UpdateOrderDto updatedOrder)
+        public async Task<ActionResult> UpdateOrder([FromBody] UpdateOrderVm updatedOrder)
         {
-            var updateResponse = await _orderService.UpdateOrder(updatedOrder);
-            if(updateResponse == false)
+            int userId = CommonMethods.GetUserIdFromContext(HttpContext);
+            
+            UpdateOrderCommand updateOrderCommand = new UpdateOrderCommand();
+            updateOrderCommand.UserId = userId;
+            updateOrderCommand.UpdateOrderInfo = updatedOrder;
+
+            var updateResponse = await _mediator.Send(updateOrderCommand);
+            
+            if (updateResponse == null)
             {
                 return BadRequest(OrderMessages.OrderNotUpdated);
             }
@@ -56,12 +74,13 @@ namespace ITPLibrary.Api.Controllers
             return Ok(OrderMessages.Success);
         }
 
+        /*
         [HttpPost(OrderControllerRoutes.Checkout)]
         public async Task<ActionResult> Checkout(CreditCardDto userCreditCard)
         {
             var charge = await _orderService.ProcessPayment(userCreditCard, CommonMethods.GetUserIdFromContext(HttpContext));
 
             return Ok(charge.Status);
-        }
+        }*/
     }
 }

@@ -11,25 +11,20 @@ namespace ITPLibrary.Application.Features.ShoppingCarts.Commands
     {
         private readonly IMapper _mapper;
         private readonly IShoppingCartRepository _shoppingCartRepository;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public DeleteBookFromShoppingCartCommandHandler
             (
             IMapper mapper,
-                IShoppingCartRepository shoppingCartRepository,
-                    IHttpContextAccessor httpContextAccessor
+                IShoppingCartRepository shoppingCartRepository
             )
         {
             _mapper = mapper;
             _shoppingCartRepository = shoppingCartRepository;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ShoppingCart> Handle(DeleteBookFromShoppingCartCommand request, CancellationToken cancellationToken)
         {
-            int userId = CommonMethods.GetUserIdFromContext(_httpContextAccessor.HttpContext);
-
-            var shoppingCart = await _shoppingCartRepository.GetAsync(userId, request.BookId);
+            var shoppingCart = await _shoppingCartRepository.GetAsync(request.UserId, request.BookId);
 
             if (shoppingCart == null)
             {

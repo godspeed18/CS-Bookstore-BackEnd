@@ -1,14 +1,9 @@
 using Constants;
-using ITPLibrary.Api.Core.Configurations;
-using ITPLibrary.Api.Core.Services.Implementations;
-using ITPLibrary.Api.Core.Services.Interfaces;
-using ITPLibrary.Api.Data.Configurations;
-using ITPLibrary.Api.Data.Data;
-using ITPLibrary.Api.Data.Data.Data_Provider.Implementations;
-using ITPLibrary.Api.Data.Data.Data_Provider.Interfaces;
-using ITPLibrary.Api.Data.Repositories.Implementations;
-using ITPLibrary.Api.Data.Repositories.Interfaces;
 using ITPLibrary.Api.OperationFilters;
+using ITPLibrary.Application;
+using ITPLibrary.Common;
+using ITPLibrary.Infrastructure.InfrastructureService;
+using ITPLibrary.Infrastructure.Persistance;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -67,29 +62,9 @@ var portAndHostConfig = new PortAndHostConfiguration();
 builder.Configuration.Bind(nameof(PortAndHostConfiguration), portAndHostConfig);
 builder.Services.AddSingleton(portAndHostConfig);
 
-builder.Services.AddScoped<IUserLoginService, UserLoginService>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
-
-builder.Services.AddScoped<IBookRepository, BookRepository>();
-builder.Services.AddScoped<IBookService, BookService>();
-builder.Services.AddScoped<IBookDataProvider, BookDataProvider>();
-
-builder.Services.AddScoped<IRecoveryCodeRepository, RecoveryCodeRepository>();
-builder.Services.AddScoped<IRecoveryCodeService, RecoveryCodeService>();
-
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-builder.Services.AddScoped<IOrderService, OrderService>();
-
-builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
-builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
-
-builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
-
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
-    builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddHttpContextAccessor();
+builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddPersistanceServices(builder.Configuration);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
@@ -108,6 +83,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 });
 
 builder.Services.AddAuthorization();
+
+builder.Services.AddHttpContextAccessor();
 
 //Registering AutoMapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -131,7 +108,7 @@ app.MapControllers();
 
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var db = scope.ServiceProvider.GetRequiredService<ITPLibraryDbContext>();
     db.Database.Migrate();
 }
 

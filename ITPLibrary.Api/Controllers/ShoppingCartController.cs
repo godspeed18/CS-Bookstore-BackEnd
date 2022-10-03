@@ -1,7 +1,9 @@
 ﻿using Common;
 using ITPLibrary.Api.Controllers.MethodRoutes;
-using ITPLibrary.Api.Core.Services.Interfaces;
 using ITPLibrary.Api.Data.Entities.RequestMessages;
+using ITPLibrary.Application.Features.ShoppingCarts.Commands;
+using ITPLibrary.Application.Features.ShoppingCarts.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,19 +12,26 @@ namespace ITPLibrary.Api.Controllers
     [Authorize]
     public class ShoppingCartController : ControllerBase
     {
-        private readonly IShoppingCartService _service;
+        private readonly IMediator _mediator;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ShoppingCartController(IShoppingCartService service)
+        public ShoppingCartController(IMediator mediator, IHttpContextAccessor httpContextAccessor)
         {
-            _service = service;
+            _mediator = mediator;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpDelete($"{ShoppingCartControllerRoutes.DeleteItem}/{{bookId}}")]
         public async Task<ActionResult> DeleteItem([FromRoute]int bookId)
         {
-            var serviceResponse = await _service.DeleteBookFromCart(CommonMethods.GetUserIdFromContext
-                                                (HttpContext), bookId);
-            if (serviceResponse == false)
+            int userId = CommonMethods.GetUserIdFromContext(_httpContextAccessor.HttpContext);
+            
+            DeleteBookFromShoppingCartCommand deleteBook = new DeleteBookFromShoppingCartCommand();
+            deleteBook.BookId = bookId;
+            deleteBook.UserId = userId;
+
+            var serviceResponse = await _mediator.Send(deleteBook);
+            if (serviceResponse == null)
             {
                 return BadRequest(ShoppingCartMessages.FailedToDeleteFromCart);
             }
@@ -33,10 +42,15 @@ namespace ITPLibrary.Api.Controllers
         [HttpPost($"{ShoppingCartControllerRoutes.AddItem}/{{bookId}}")]
         public async Task<ActionResult> PostItem([FromRoute] int bookId)
         {
-            var serviceResponse = await _service.PostBookInCart(CommonMethods.GetUserIdFromContext
-                                                   (HttpContext), bookId);
+            int userId = CommonMethods.GetUserIdFromContext(_httpContextAccessor.HttpContext);
 
-            if (serviceResponse != true)
+            AddBookToShoppingCartCommand addBook = new AddBookToShoppingCartCommand();
+            addBook.BookId = bookId;
+            addBook.UserId = userId;
+
+            var serviceResponse = await _mediator.Send(addBook);
+
+            if (serviceResponse == null)
             {
                 return BadRequest(ShoppingCartMessages.FailedToAddToCart);
             }
@@ -49,8 +63,12 @@ namespace ITPLibrary.Api.Controllers
         [HttpGet(ShoppingCartControllerRoutes.GetShoppingCart)]
         public async Task<ActionResult> GetShoppingCart()
         {
-            var shoppingCart = await _service.GetShoppingCart(
-                        CommonMethods.GetUserIdFromContext(HttpContext));
+            int userId = CommonMethods.GetUserIdFromContext(_httpContextAccessor.HttpContext);
+
+            GetShoppingCartQuery getCart = new GetShoppingCartQuery();
+            getCart.UserId = userId;
+
+            var shoppingCart = await _mediator.Send(getCart);
 
             return Ok(shoppingCart);
         }

@@ -5,5 +5,6 @@ namespace ITPLibrary.Application.Features.ShoppingCarts.Queries
 {
     public class GetShoppingCartQuery : IRequest<IReadOnlyList<DisplayShoppingCartVm>>
     {
+        public int UserId { get; set; }
     }
 }

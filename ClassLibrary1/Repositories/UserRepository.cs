@@ -17,7 +17,7 @@ namespace ITPLibrary.Infrastructure.Persistance.Repositories
 
         public async Task<User> GetUserByEmail(string email)
         {
-            return await _db.Users.FirstOrDefaultAsync((u => u.Email == email));
+            return await _db.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
     }
 }
