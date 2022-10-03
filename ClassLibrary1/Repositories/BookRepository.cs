@@ -19,8 +19,7 @@ namespace ITPLibrary.Infrastructure.Persistance.Repositories
         public async Task<IEnumerable<Book>> GetPopularAndRecentlyAddedBooks()
         {
             return await _db.Books
-                .Where(u => (u.AddedDateTime.AddDays(BookValidationRules.RecentlyAddedRule)).CompareTo(DateTimeOffset.UtcNow) >= 0)
-                 .Where(u => u.Popular == true)
+                .Where(u => (u.AddedDateTime.AddDays(BookValidationRules.RecentlyAddedRule)).CompareTo(DateTimeOffset.UtcNow) >= 0 || u.Popular == true)
                  .ToListAsync();
 
         }
